@@ -1,0 +1,62 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.8
+
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile (    		 	
+    		'io.netty:netty-all:4.0.24.Final'    		
+    		)
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+test {
+    systemProperties 'property': 'value'
+}
+
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'repos'
+       }
+    }
+}
+
+task listJars << {
+    configurations.compile.each { File file -> println file.name }
+}
+
+task printClasspathStringJars << {   
+    println getClasspathStringJars()
+}
+
+def getClasspathStringJars() {
+	def baseFolder = 'deps/'
+    def fileNames = []
+    configurations.compile.each { File file -> fileNames.add(baseFolder + file.name) }
+    
+    def classpath = fileNames.join(" ; ")    
+    return classpath
+}
+
+task copyRuntimeLibs(type: Copy) {  
+  into "build/libs/deps"  
+  from configurations.compile  
+}
+
+jar {
+	def classpath = '. ; ' + getClasspathStringJars() + ' ; '
+    manifest {
+        attributes ('Implementation-Title': 'netty-cookbook-chapter1', 
+        			'Implementation-Version': version ,
+        			'Main-Class': 'netty.cookbook.recipe1.EchoServer',
+        			'Class-Path' : classpath)
+        
+    }
+}

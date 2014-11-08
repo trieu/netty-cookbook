@@ -1,9 +1,8 @@
 package netty.cookbook.recipe1;
 
-import java.util.function.Function;
-
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
@@ -13,8 +12,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.util.CharsetUtil;
 
 /**
@@ -31,31 +28,24 @@ public final class EchoClient {
 
     
     public static abstract class AsynchCall {
-
     	String message;
+    	ChannelHandlerContext ctx;
     	
     	public String getMessage() {
 			return message;
 		}
     	
+    	
+    	
 		public AsynchCall(String message) {
 			super();
 			this.message = message;
-		}
-
-		
-		public abstract void apply(String res);
-    	
+		}		
+		public abstract void apply(String res);    	
     }
     
-    public static void main(String[] args) throws Exception {
-    	AsynchCall asynchCall = new AsynchCall("hello"){
-    		public void apply(String rs) {
-    			System.out.println("Got from server : " + rs);
-    		}
-    	};
-
-        // Configure the client.
+    static void newTcpClient(AsynchCall asynchCall) throws Exception{
+    	 // Configure the client.
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
@@ -84,5 +74,15 @@ public final class EchoClient {
             // Shut down the event loop to terminate all threads.
             group.shutdownGracefully();
         }
+    }
+    
+    public static void main(String[] args) throws Exception {
+    	AsynchCall asynchCall = new AsynchCall("hello"){
+    		public void apply(String rs) {
+    			System.out.println("Got from server : " + rs);
+    		}
+    	};
+    	newTcpClient(asynchCall);
+       
     }
 }

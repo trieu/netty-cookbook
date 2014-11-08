@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="chapter-1-src"/>
-	<classpathentry kind="src" path="chapter-2-src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-8-oracle"/>
-	<classpathentry kind="lib" path="lib/netty-all-4.0.23.Final.jar"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>
