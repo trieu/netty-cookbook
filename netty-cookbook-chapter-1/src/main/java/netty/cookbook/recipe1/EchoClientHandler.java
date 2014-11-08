@@ -1,11 +1,6 @@
 package netty.cookbook.recipe1;
 
 
-import java.util.function.Function;
-
-import netty.cookbook.recipe1.EchoClient.AsynchCall;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
@@ -16,28 +11,53 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
  */
 public class EchoClientHandler extends ChannelInboundHandlerAdapter {
 	
-	AsynchCall asynchCall;
+	CallbackProcessor asynchCall;
+	String message;
 
     /**
      * Creates a client-side handler.
      */
-    public EchoClientHandler(AsynchCall asynchCall) {
+    public EchoClientHandler(String message, CallbackProcessor asynchCall) {
+    	this.message = message;
     	this.asynchCall = asynchCall;
     }
 
+   
     @Override
-    public void channelActive(ChannelHandlerContext ctx) {
-        ctx.writeAndFlush(asynchCall.getMessage());
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+    
+    	System.out.println("channelRegistered "+ ctx.channel());
+    }
+    
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {    	
+    	System.out.println("channelUnregistered "+ ctx.channel());
+    }
+    
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {    	
+    	System.out.println("channelActive "+ctx.channel());
+    	
+    	//send to server
+    	ctx.writeAndFlush(this.message);
+    }
+    
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {    	
+    	System.out.println("channelInactive "+ctx.channel());
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        this.asynchCall.apply(msg.toString());
+        this.asynchCall.process(msg.toString());
     }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
-       ctx.flush();
+    	 ctx.flush();
+         
+         //close the connection after flushing data to client
+         ctx.close();
     }
 
     @Override

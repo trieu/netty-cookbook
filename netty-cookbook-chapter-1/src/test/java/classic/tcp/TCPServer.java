@@ -1,4 +1,4 @@
-package netty.cookbook.recipe1;
+package classic.tcp;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
