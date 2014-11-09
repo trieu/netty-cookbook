@@ -5,27 +5,32 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
 /**
- * Handler implementation for the echo client.  It initiates the ping-pong
- * traffic between the echo client and server by sending the first message to
+ * Handler implementation for the TCP client.  It initiates the ping-pong
+ * traffic between the TCP client and server by sending the first message to
  * the server.
  */
-public class EchoClientHandler extends ChannelInboundHandlerAdapter {
+public class TcpClientHandler extends ChannelInboundHandlerAdapter {
 	
-	CallbackProcessor asynchCall;
 	String message;
+	CallbackProcessor asynchCall;	
 
-    /**
-     * Creates a client-side handler.
-     */
-    public EchoClientHandler(String message, CallbackProcessor asynchCall) {
+    public TcpClientHandler(String message, CallbackProcessor asynchCall) {
     	this.message = message;
     	this.asynchCall = asynchCall;
     }
-
+    
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    	ctx.writeAndFlush(this.message);
+    }
+    
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        this.asynchCall.process(msg.toString());
+    }
    
     @Override
-    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-    
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {    
     	System.out.println("channelRegistered "+ ctx.channel());
     }
     
@@ -34,23 +39,14 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
     	System.out.println("channelUnregistered "+ ctx.channel());
     }
     
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {    	
-    	System.out.println("channelActive "+ctx.channel());
-    	
-    	//send to server
-    	ctx.writeAndFlush(this.message);
-    }
+    
     
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {    	
     	System.out.println("channelInactive "+ctx.channel());
     }
 
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        this.asynchCall.process(msg.toString());
-    }
+   
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {

@@ -1,11 +1,8 @@
 package netty.cookbook.recipe1;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
@@ -19,20 +16,24 @@ import io.netty.util.CharsetUtil;
 
 /**
  * Sends one message when a connection is open and echoes back any received
- * data to the server.  Simply put, the echo client initiates the ping-pong
- * traffic between the echo client and server by sending the first message to
+ * data to the server.  Simply put, the TCP client initiates the ping-pong
+ * traffic between the TCP client and server by sending the first message to
  * the server.
  */
-public final class EchoClient {
+public final class TcpClient {
 
     static final String HOST = System.getProperty("host", "127.0.0.1");
     static final int PORT = Integer.parseInt(System.getProperty("port", "8007"));
     static final int SIZE = Integer.parseInt(System.getProperty("size", "256"));
     
-    List<EchoClientHandler> clientHandlers = new ArrayList<>();
+    ChannelHandler clientHandler;
     
-    protected void call(){
-    	 // Configure the client.
+    protected void execute(){
+    	if(clientHandler == null){
+    		throw new IllegalArgumentException("clientHandler is NULL, please define a tcpClientChannelHandler !");
+    	}
+    	
+    	// Configure the client.
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
@@ -51,44 +52,32 @@ public final class EchoClient {
                      // Encoder
                      p.addLast("stringEncoder", new StringEncoder(CharsetUtil.UTF_8));  
                      
-                     int c = 0;
-                     for (EchoClientHandler clientHandler : clientHandlers) {
-                    	 c++;
-                    	 System.out.println(c);
-                    	 p.addLast(clientHandler);	
-                     }                     
+                     // the handler for client
+                     p.addLast(clientHandler);
                  }
              });
 
             // Start the client.
             ChannelFuture f = b.connect(HOST, PORT).sync();
-            System.out.println("a");
-                      
+                                  
             // Wait until the connection is closed.
-            f.channel().closeFuture().sync();
-            System.out.println("a1");
+            f.channel().closeFuture().sync();            
         } catch (Exception e){   
             e.printStackTrace();
         } finally {
-            // Shut down the event loop to terminate all threads.
-        	System.out.println("c");
+            // Shut down the event loop to terminate all threads.        	
             group.shutdownGracefully();
         }
     }
     
-    public EchoClient send(String message, CallbackProcessor asynchCall) throws Exception{
-    	clientHandlers.add(new EchoClientHandler(message, asynchCall));
+    public TcpClient buildHandler(String message, CallbackProcessor asynchCall) throws Exception{
+    	clientHandler = new TcpClientHandler(message, asynchCall);
     	return this;
-    }
-        
+    }        
     
-    public static void main(String[] args) throws Exception {
-    	EchoClient client = new EchoClient();
-    	client.send("hello 1", rs ->{
-    		System.out.println("processHandler1 Got from server : " + rs);
-    		//System.exit(1);
-    	}).call();
-    	;
-       
+    public static void main(String[] args) throws Exception {    	
+    	new TcpClient().buildHandler("hello server", rs -> {
+    		System.out.println(rs);    		
+    	}).execute();       
     }
 }

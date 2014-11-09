@@ -18,7 +18,7 @@ import io.netty.util.CharsetUtil;
 /**
  * Echoes back any received data from a client.
  */
-public final class EchoServer {
+public final class TcpServer {
 
     static final int PORT = Integer.parseInt(System.getProperty("port", "8007"));
 
@@ -38,12 +38,14 @@ public final class EchoServer {
                  public void initChannel(SocketChannel ch) throws Exception {
                      ChannelPipeline p = ch.pipeline();
                      
-                     // Decoder
+                     // the Decoder
                      p.addLast("stringDecoder", new StringDecoder(CharsetUtil.UTF_8));
 
-                     // Encoder
-                     p.addLast("stringEncoder", new StringEncoder(CharsetUtil.UTF_8));                     
-                     p.addLast(new EchoServerHandler());
+                     // the Encoder
+                     p.addLast("stringEncoder", new StringEncoder(CharsetUtil.UTF_8));      
+                     
+                     // the handler
+                     p.addLast(new TcpServerHandler());
                  }
              });
 
