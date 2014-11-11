@@ -1,4 +1,4 @@
-package netty.cookbook.recipe1;
+package netty.cookbook.common;
 
 @FunctionalInterface
 public interface CallbackProcessor {    	

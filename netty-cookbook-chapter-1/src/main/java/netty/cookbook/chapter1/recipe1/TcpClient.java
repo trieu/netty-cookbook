@@ -1,5 +1,6 @@
-package netty.cookbook.recipe1;
+package netty.cookbook.chapter1.recipe1;
 
+import netty.cookbook.common.CallbackProcessor;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
@@ -76,7 +77,7 @@ public final class TcpClient {
     }        
     
     public static void main(String[] args) throws Exception {    	
-    	new TcpClient().buildHandler("hello server", rs -> {
+    	new TcpClient().buildHandler("hi", rs -> {
     		System.out.println(rs);    		
     	}).execute();       
     }

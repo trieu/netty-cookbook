@@ -1,6 +1,7 @@
-package netty.cookbook.recipe1;
+package netty.cookbook.chapter1.recipe4;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -18,7 +19,7 @@ import io.netty.util.CharsetUtil;
 /**
  * Echoes back any received data from a client.
  */
-public final class TcpServer {
+public final class TcpServerPipe {
 
     static final int PORT = Integer.parseInt(System.getProperty("port", "8007"));
 
@@ -45,15 +46,17 @@ public final class TcpServer {
                      p.addLast("stringEncoder", new StringEncoder(CharsetUtil.UTF_8));      
                      
                      // the handler
-                     p.addLast(new TcpServerHandler());
+                     p.addLast(new TcpServerOutboundHandler());
+                     p.addLast(new TcpServerInboundHandler());
                  }
              });
 
             // Start the server.
             ChannelFuture f = b.bind(PORT).sync();
-
+            Channel channel = f.channel();
+          
             // Wait until the server socket is closed.
-            f.channel().closeFuture().sync();
+            channel.closeFuture().sync();
         } finally {
             // Shut down all event loops to terminate all threads.
             bossGroup.shutdownGracefully();

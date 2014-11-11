@@ -1,18 +1,20 @@
-package netty.cookbook.recipe1;
+package netty.cookbook.chapter1.recipe4;
 
 
+import netty.cookbook.common.CallbackProcessor;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
  * Handler implementation for the TCP client.  It initiates the ping-pong
  * traffic between the TCP client and server by sending the first message to
  * the server.
  */
-public class TcpClientHandler extends ChannelInboundHandlerAdapter {
+public class TcpClientHandler extends SimpleChannelInboundHandler<String> {
 	
 	String message;
-	CallbackProcessor asynchCall;	
+	CallbackProcessor asynchCall;
+	boolean close = false;
 
     public TcpClientHandler(String message, CallbackProcessor asynchCall) {
     	this.message = message;
@@ -25,8 +27,11 @@ public class TcpClientHandler extends ChannelInboundHandlerAdapter {
     }
     
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        this.asynchCall.process(msg.toString());
+    public void channelRead0(ChannelHandlerContext ctx, String msg) {
+        this.asynchCall.process(msg);
+        if("close".equals(msg)){
+        	close = true;
+        }
     }
    
     @Override
@@ -39,21 +44,19 @@ public class TcpClientHandler extends ChannelInboundHandlerAdapter {
     	System.out.println("channelUnregistered "+ ctx.channel());
     }
     
-    
-    
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {    	
     	System.out.println("channelInactive "+ctx.channel());
-    }
-
-   
+    }   
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
     	 ctx.flush();
          
          //close the connection after flushing data to client
-         ctx.close();
+    	 if(close){
+    		 ctx.close();	 
+    	 }         
     }
 
     @Override
@@ -62,4 +65,5 @@ public class TcpClientHandler extends ChannelInboundHandlerAdapter {
         cause.printStackTrace();
         ctx.close();
     }
+
 }
