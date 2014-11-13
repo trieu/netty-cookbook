@@ -3,6 +3,8 @@ package netty.cookbook.chapter1.recipe1;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
@@ -20,11 +22,8 @@ import io.netty.util.CharsetUtil;
  * Echoes back any received data from a client.
  */
 public final class TcpServer {
-
     static final int PORT = Integer.parseInt(System.getProperty("port", "8007"));
-
-    public static void main(String[] args) throws Exception {
-
+    public static void main(String[] args) throws Exception {    	
         // Configure the server.
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -37,23 +36,25 @@ public final class TcpServer {
              .childHandler(new ChannelInitializer<SocketChannel>() {
                  @Override
                  public void initChannel(SocketChannel ch) throws Exception {
-                     ChannelPipeline p = ch.pipeline();
-                     
+                     ChannelPipeline p = ch.pipeline();                     
                      // the Decoder
                      p.addLast("stringDecoder", new StringDecoder(CharsetUtil.UTF_8));
-
                      // the Encoder
-                     p.addLast("stringEncoder", new StringEncoder(CharsetUtil.UTF_8));      
-                     
-                     // the handler
-                     p.addLast(new TcpServerHandler());
+                     p.addLast("stringEncoder", new StringEncoder(CharsetUtil.UTF_8)); 
+                     // the handler: implement your logic here
+                     p.addLast(new ChannelInboundHandlerAdapter(){
+                    	 @Override
+                    	public void channelRead(ChannelHandlerContext ctx,
+                    			Object msg) throws Exception {
+                    		 String s = String.format("Response the message %s from server", msg);
+                    		 ctx.writeAndFlush(s);
+                    	}
+                     });
                  }
              });
-
             // Start the server.
             ChannelFuture f = b.bind(PORT).sync();
-            Channel channel = f.channel();
-          
+            Channel channel = f.channel();          
             // Wait until the server socket is closed.
             channel.closeFuture().sync();
         } finally {

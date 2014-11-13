@@ -1,6 +1,5 @@
 package netty.cookbook.chapter1.recipe1;
 
-import netty.cookbook.common.CallbackProcessor;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
@@ -14,6 +13,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
+import netty.cookbook.common.CallbackProcessor;
 
 /**
  * Sends one message when a connection is open and echoes back any received
@@ -23,13 +23,19 @@ import io.netty.util.CharsetUtil;
  */
 public final class TcpClient {
 
-    static final String HOST = System.getProperty("host", "127.0.0.1");
-    static final int PORT = Integer.parseInt(System.getProperty("port", "8007"));
-    static final int SIZE = Integer.parseInt(System.getProperty("size", "256"));
-    
+	String host;
+	int port;
     ChannelHandler clientHandler;
     
-    protected void execute(){
+  
+    
+    public TcpClient(String host, int port) {
+		super();
+		this.host = host;
+		this.port = port;
+	}
+
+	protected void execute(){
     	if(clientHandler == null){
     		throw new IllegalArgumentException("clientHandler is NULL, please define a tcpClientChannelHandler !");
     	}
@@ -59,7 +65,7 @@ public final class TcpClient {
              });
 
             // Start the client.
-            ChannelFuture f = b.connect(HOST, PORT).sync();
+            ChannelFuture f = b.connect(host, port).sync();
                                   
             // Wait until the connection is closed.
             f.channel().closeFuture().sync();            
@@ -77,7 +83,7 @@ public final class TcpClient {
     }        
     
     public static void main(String[] args) throws Exception {    	
-    	new TcpClient().buildHandler("hi", rs -> {
+    	new TcpClient("127.0.0.1",8007).buildHandler("Hello", rs -> {
     		System.out.println(rs);    		
     	}).execute();       
     }
