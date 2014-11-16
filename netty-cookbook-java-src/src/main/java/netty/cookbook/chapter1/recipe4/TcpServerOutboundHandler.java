@@ -3,7 +3,6 @@ package netty.cookbook.chapter1.recipe4;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
-import io.netty.channel.ChannelPromise;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -11,20 +10,11 @@ import io.netty.util.concurrent.GenericFutureListener;
  * Handler implementation for the TCP server.
  */
 @Sharable
-public class TcpServerOutboundHandler extends ChannelOutboundHandlerAdapter {
-
-	@Override
-	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-		StringBuilder wrapper = new StringBuilder();
-		wrapper.append("{").append(msg).append("}");
-		super.write(ctx, wrapper.toString(), promise);
-	}
-	
+public class TcpServerOutboundHandler extends ChannelOutboundHandlerAdapter {	
 	@Override
 	public void flush(ChannelHandlerContext ctx) throws Exception {	
 		super.flush(ctx);	
 		ctx.close().addListener(new GenericFutureListener<Future<? super Void>>() {
-
 			@Override
 			public void operationComplete(Future<? super Void> future)
 					throws Exception {
