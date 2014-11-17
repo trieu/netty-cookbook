@@ -15,7 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 public class DataProcessingPipeline extends ChannelInitializer<SocketChannel>{
+	final static Logger logger = Logger.getLogger(DataProcessingPipeline.class);	
 	@Override
 	protected void initChannel(SocketChannel ch) throws Exception {
 		 ChannelPipeline p = ch.pipeline();		         
@@ -26,8 +29,8 @@ public class DataProcessingPipeline extends ChannelInitializer<SocketChannel>{
          // the log handler and data transformer
          p.addLast("logger",new MessageToMessageDecoder<String>(){
 			@Override
-			protected void decode(ChannelHandlerContext ctx, String msg,List<Object> out) throws Exception {
-				System.out.println(String.format("logged raw data '%s'", msg));				
+			protected void decode(ChannelHandlerContext ctx, String msg,List<Object> out) throws Exception {				
+				logger.info(String.format("logged raw data '%s'", msg));
 				InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
 				Map<String, String> request = new HashMap<>();
 				request.put("data", msg);
@@ -40,8 +43,8 @@ public class DataProcessingPipeline extends ChannelInitializer<SocketChannel>{
         	 @Override
         	public void channelRead0(ChannelHandlerContext ctx, Map<String, String> request)
         			throws Exception {
-        		System.out.println("from-host: "+request.get("from-ip"));
-        		System.out.println("data: "+request.get("data"));
+        		logger.info(String.format("from-host: '%s'", request.get("from-ip")));
+        		logger.info(String.format("data: '%s'", request.get("data")));
         		ctx.writeAndFlush("Done");
         	}        
          });

@@ -8,6 +8,8 @@ import java.net.InetSocketAddress;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.log4j.Logger;
+
 /**
  * Handler implementation for the TCP server.
  */
@@ -15,10 +17,11 @@ import java.util.TimerTask;
 public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	
 	boolean isCatchedException = false;
+	final static Logger logger = Logger.getLogger(TcpServerHandler.class);
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-    	System.out.println(msg);
+    	logger.info(msg);
     	
     	if(msg.equals("")){
     		isCatchedException = true;    		
@@ -35,7 +38,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {    	
     	super.channelRegistered(ctx);
     	InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
-    	System.out.println("channelRegistered "+ address.getAddress());
+    	logger.info("channelRegistered "+ address.getAddress());
     	isCatchedException = false;
     }
     
@@ -43,20 +46,20 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {    	
     	super.channelUnregistered(ctx);
     	InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
-    	System.out.println("channelUnregistered "+ address.getAddress());
+    	logger.info("channelUnregistered "+ address.getAddress());
     }
     
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {    	
     	super.channelActive(ctx);
-    	System.out.println("channelActive "+ctx.channel());
+    	logger.info("channelActive "+ctx.channel());
     	ctx.channel().writeAndFlush("connected");
     }
     
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {    	
     	super.channelInactive(ctx);
-    	System.out.println("channelInactive "+ctx.channel().remoteAddress());
+    	logger.info("channelInactive "+ctx.channel().remoteAddress());
     }
 
     @Override
