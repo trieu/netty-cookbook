@@ -78,7 +78,7 @@ public final class TcpClient {
     }
     
     public TcpClient buildHandler(String message, CallbackProcessor asynchCall) throws Exception{
-    	clientHandler = new TcpClientHandler(message, asynchCall);
+    	clientHandler = new TcpClientLambdaHandler(message, asynchCall);
     	return this;
     }        
     

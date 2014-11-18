@@ -10,13 +10,13 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * traffic between the TCP client and server by sending the first message to
  * the server.
  */
-public class TcpClientHandler extends SimpleChannelInboundHandler<String> {
+public class TcpClientLambdaHandler extends SimpleChannelInboundHandler<String> {
 	
 	String message;
 	CallbackProcessor asynchCall;
 	boolean close = false;
 
-    public TcpClientHandler(String message, CallbackProcessor asynchCall) {
+    public TcpClientLambdaHandler(String message, CallbackProcessor asynchCall) {
     	this.message = message;
     	this.asynchCall = asynchCall;
     }
