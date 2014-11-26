@@ -2,5 +2,5 @@ package netty.cookbook.common;
 
 @FunctionalInterface
 public interface CallbackProcessor {    	
-	public void process(String res);
+	public void process(Object obj);
 }
