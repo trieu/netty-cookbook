@@ -1,18 +1,15 @@
 package netty.cookbook.chapter2.recipe1;
 
-import java.util.List;
-
-import netty.cookbook.common.PurchaseData;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToMessageEncoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
 
-public class PurchaseDataEncoder extends MessageToMessageEncoder<PurchaseData> {
+import java.io.Serializable;
 
+public class PurchaseDataEncoder extends ObjectEncoder {
 	@Override
-	protected void encode(ChannelHandlerContext ctx, PurchaseData msg,
-			List<Object> out) throws Exception {
-		System.out.println("encode "+msg);
-		out.add(msg);
+	protected void encode(ChannelHandlerContext ctx, Serializable msg, ByteBuf buf) throws Exception {		
+		super.encode(ctx, msg, buf);
+		System.out.println("encode bytes "+buf.readableBytes());
 	}
-
 }

@@ -9,9 +9,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.serialization.ClassResolvers;
-import io.netty.handler.codec.serialization.ObjectDecoder;
-import io.netty.handler.codec.serialization.ObjectEncoder;
 import netty.cookbook.common.CallbackProcessor;
 import netty.cookbook.common.PurchaseData;
 
@@ -35,8 +32,8 @@ public class PurchaseClient {
 		                 @Override
 		                 public void initChannel(SocketChannel ch) throws Exception {
 		                     ChannelPipeline p = ch.pipeline();                    
-		                     p.addLast("decoder", new ObjectDecoder(ClassResolvers.weakCachingConcurrentResolver(null)));
-		                     p.addLast("encoder", new ObjectEncoder());
+		                     p.addLast("decoder", new PurchaseDataDecoder());	                     
+		                     p.addLast("encoder", new PurchaseDataEncoder());  
 		                     p.addLast(clientHandler);
 		                 }
              }).connect(host, port).sync();

@@ -12,6 +12,7 @@ repositories {
 dependencies {
     compile (    		 	
     		'io.netty:netty-all:4.0.24.Final'
+    		,'com.google.guava:guava:18.0'    		
     		,'com.typesafe.akka:akka-actor_2.11:2.3.6'
     		,'com.google.code.gson:gson:2.3'
     		,'com.netflix.rxnetty:rx-netty:0.3.18'
