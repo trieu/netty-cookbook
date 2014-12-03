@@ -19,7 +19,7 @@ import java.net.URI;
 
 public class HttpDownloader {
 
-	static final String URL = System.getProperty("url", "http://nguyentantrieu.info");
+	static final String URL = System.getProperty("url", "http://www.mc2ads.com/");
 
 	public static void main(String[] args) throws Exception {
 		URI uri = new URI(URL);
@@ -70,9 +70,10 @@ public class HttpDownloader {
 			ch.writeAndFlush(request);
 			// Wait for the server to close the connection.
 			ch.closeFuture().sync();
+			Thread.sleep(1000);
 		} finally {
 			// Shut down executor threads to exit.
 			group.shutdownGracefully();
-		}
+		}		
 	}
 }

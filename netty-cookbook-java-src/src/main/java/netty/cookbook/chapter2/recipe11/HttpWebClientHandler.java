@@ -17,7 +17,7 @@ import java.nio.channels.FileChannel;
 
 public class HttpWebClientHandler extends
 		SimpleChannelInboundHandler<HttpObject> {
-	File file = new File("./data/nguyentantrieu.info.html");
+	File file = new File("./data/www.mc2ads.com.html");
 	int written = 0;	
 	FileOutputStream outputStream;
 	FileChannel localfileChannel;	
