@@ -10,7 +10,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import netty.cookbook.common.CallbackProcessor;
-import netty.cookbook.common.PurchaseData;
+import netty.cookbook.common.model.PurchaseData;
 
 public class PurchaseClient {
 	String host; int port;

@@ -2,7 +2,7 @@ package netty.cookbook.chapter2.recipe1;
 
 
 import netty.cookbook.common.CallbackProcessor;
-import netty.cookbook.common.PurchaseData;
+import netty.cookbook.common.model.PurchaseData;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 

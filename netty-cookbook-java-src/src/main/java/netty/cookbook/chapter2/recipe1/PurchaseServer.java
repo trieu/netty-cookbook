@@ -14,7 +14,7 @@ import io.netty.handler.logging.LoggingHandler;
 
 import java.net.InetSocketAddress;
 
-import netty.cookbook.common.PurchaseData;
+import netty.cookbook.common.model.PurchaseData;
 
 import org.apache.log4j.Logger;
 

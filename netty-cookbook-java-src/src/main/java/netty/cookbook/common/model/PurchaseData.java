@@ -1,4 +1,4 @@
-package netty.cookbook.common;
+package netty.cookbook.common.model;
 
 import java.io.Serializable;
 

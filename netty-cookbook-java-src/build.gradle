@@ -13,14 +13,17 @@ dependencies {
     compile (    		 	
     		'io.netty:netty-all:4.0.24.Final'
     		,'commons-io:commons-io:2.4'
+    		,'org.apache.commons:commons-lang3:3.3.2'    		
     		,'log4j:log4j:1.2.17'   
     		,'org.slf4j:slf4j-log4j12:1.7.7'    		
-    		,'com.jcraft:jzlib:1.1.3'    		
+    		,'com.jcraft:jzlib:1.1.3'
+    		,'org.yaml:snakeyaml:1.14'    		    		
     		
     		,'com.google.code.gson:gson:2.3'    		
     		,'com.google.guava:guava:18.0'    		
     		,'com.typesafe.akka:akka-actor_2.11:2.3.6'    		
-    		,'io.reactivex:rxjava:1.0.1'
+    		,'io.reactivex:rxjava:1.0.1'    		
+    		,'redis.clients:jedis:2.6.1'    		
     		    		
     		,'org.apache.avro:avro:1.7.7'
     		,'org.apache.avro:avro-ipc:1.7.7'    		
