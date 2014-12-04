@@ -13,28 +13,22 @@ import avro.Message;
 
 public class ServerAvroRPC {
 	public static class MailImpl implements Mail {
-		// in this simple example just return details of the message
-		public Utf8 send(Message message) {
-			System.out.println("Sending message");
-			return new Utf8("Sending message to " + message.getTo().toString()
+		public Utf8 send(Message message) {			
+			System.out.println("Sending message to " + message.getTo().toString()
 					+ " from " + message.getFrom().toString() + " with body "
-					+ message.getBody().toString());
+					+ message.getBody().toString());			
+			return new Utf8("Sent to "+ message.getTo());
 		}
 	}
-
 	private static Server server;
-
 	static void startServer() throws IOException {
-		server = new NettyServer(new SpecificResponder(Mail.class,
-				new MailImpl()), new InetSocketAddress(10000));
+		server = new NettyServer(new SpecificResponder(Mail.class,new MailImpl()), new InetSocketAddress(10000));
 	}
-
 	public static void main(String[] args) throws Exception {
-		System.out.println("Starting server");
-		// usually this would be another app, but for simplicity
+		System.out.println("Starting ServerAvroRPC");
 		startServer();
-		System.out.println("Server started and wait for 10s");		
-		Thread.sleep(10000);		
+		System.out.println("ServerAvroRPC started and wait for 10s");		
+		Thread.sleep(10000);
 		server.close();
 	}
 }

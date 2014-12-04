@@ -3,8 +3,8 @@ package netty.cookbook.chapter2.recipe12;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-public class MyObserver implements PropertyChangeListener {
-  public MyObserver(MyModel model) {
+public class SocialAnalyticUpdater implements PropertyChangeListener {
+  public SocialAnalyticUpdater(WebUrl model) {
     model.addChangeListener(this);
   }
 
