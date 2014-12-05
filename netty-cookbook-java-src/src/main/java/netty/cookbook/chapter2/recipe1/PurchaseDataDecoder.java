@@ -1,5 +1,6 @@
 package netty.cookbook.chapter2.recipe1;
 
+import netty.cookbook.common.NettyMonitorIO;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.serialization.ClassResolvers;
@@ -13,9 +14,7 @@ public class PurchaseDataDecoder extends ObjectDecoder {
 	protected Object decode(ChannelHandlerContext ctx, ByteBuf buf)
 			throws Exception {
 		Object object = super.decode(ctx, buf);
-		System.out.println("decode bytes "+ buf.writableBytes());
+		NettyMonitorIO.updateDataIn(buf);
 		return object;
 	}
-	
-	
 }
