@@ -29,7 +29,7 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import java.net.URI;
 
 public class NettyBootstrapUtil {
-	public static void newTcpClientBootstrap(String host, int port, ChannelInitializer<SocketChannel> initializer){
+	public static void newClientBootstrap(String host, int port, ChannelInitializer<SocketChannel> initializer){
 		EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
@@ -46,7 +46,7 @@ public class NettyBootstrapUtil {
         }
 	}
 	
-	public static void newTcpServerBootstrap(String host, int port, ChannelInitializer<SocketChannel> initializer){
+	public static void newServerBootstrap(String host, int port, ChannelInitializer<SocketChannel> initializer){
 		EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
