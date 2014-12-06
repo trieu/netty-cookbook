@@ -45,8 +45,8 @@ public class HttpServer {
     
 	public void run() throws Exception {
         // Configure the server.
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        EventLoopGroup bossGroup = new NioEventLoopGroup(8);
+        EventLoopGroup workerGroup = new NioEventLoopGroup(8);
         try {        	
         	//public service processor
             ServerBootstrap publicServerBootstrap = new ServerBootstrap();            

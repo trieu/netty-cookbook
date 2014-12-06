@@ -48,6 +48,7 @@ import static com.allanbank.mongodb.builder.QueryBuilder.where;
 public class HttpEventProcessingHandler extends
 		SimpleChannelInboundHandler<Object> {
 
+	private static final String _123456 = "123456";
 	static ShardedJedisPool jedisPool = (new RedisInfo("127.0.0.1", 6379)).getShardedJedisPool();
 	
 	public HttpEventProcessingHandler() {
@@ -57,35 +58,34 @@ public class HttpEventProcessingHandler extends
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
 		if (msg instanceof HttpRequest) {
-			HttpRequest request = (HttpRequest) msg;
+			//HttpRequest request = (HttpRequest) msg;
 			// TODO filter DDOS/bad/attacking requests
 
-			String uri = request.getUri();
-			String remoteIp = NettyHttpUtil.getRemoteIP(ctx, request);
-			String localIp = NettyHttpUtil.getLocalIP(ctx);
+//			String uri = request.getUri();
+//			String remoteIp = NettyHttpUtil.getRemoteIP(ctx, request);
+//			String localIp = NettyHttpUtil.getLocalIP(ctx);
 
 			// System.out.println(request.getMethod().name() + "==> uri: " +
 			// uri);
-			QueryStringDecoder qDecoder = new QueryStringDecoder(uri);
-			Map<String, List<String>> params = qDecoder.parameters();
+			//QueryStringDecoder qDecoder = new QueryStringDecoder(uri);
+			//Map<String, List<String>> params = qDecoder.parameters();
 
 			// boolean isPOSTMethod = "POST".equals(request.getMethod().name());
 
-			HttpRequestEvent event = new HttpRequestEvent(localIp, remoteIp,
-					uri, params, request);
-			FullHttpResponse response = processEvent(event);
+			//HttpRequestEvent event = new HttpRequestEvent(localIp, remoteIp,uri, params, request);
+			FullHttpResponse response = NettyHttpUtil.theHttpContent(_123456, ContentTypePool.TEXT_UTF8);;//processEvent(event);
 
 			// set version to response header
-			response.headers().add("Server", HttpServer.SERVER_INFO_VERSION);
+			//response.headers().add("Server", HttpServer.SERVER_INFO_VERSION);
 
 			// Write the response.
 			ChannelFuture future = ctx.write(response);
 			ctx.flush().close();
 
 			// callback and free resources
-			if (event != null) {
-				event.clear();
-			}
+//			if (event != null) {
+//				event.clear();
+//			}
 
 			// Close the non-keep-alive connection after the write operation is
 			// done.
