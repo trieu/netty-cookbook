@@ -6,10 +6,14 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.ClientCookieEncoder;
@@ -28,7 +32,16 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 
 import java.net.URI;
 
-public class NettyBootstrapUtil {
+public class BootstrapTemplate {
+	
+	public static ChannelFuture newBootstrapUDP(EventLoopGroup loopGroup, SimpleChannelInboundHandler<DatagramPacket> handler, int port){
+		return new Bootstrap().group(loopGroup)
+				.channel(NioDatagramChannel.class)
+				.option(ChannelOption.SO_BROADCAST, true)
+				.handler(handler)
+				.bind(port);
+	}
+	
 	public static void newClientBootstrap(String host, int port, ChannelInitializer<SocketChannel> initializer){
 		EventLoopGroup group = new NioEventLoopGroup();
         try {

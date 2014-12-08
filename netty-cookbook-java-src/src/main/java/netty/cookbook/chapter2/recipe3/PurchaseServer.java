@@ -1,4 +1,4 @@
-package netty.cookbook.chapter2.recipe1;
+package netty.cookbook.chapter2.recipe3;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -6,7 +6,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import netty.cookbook.common.model.PurchaseData;
-import netty.cookbook.common.tcp.NettyBootstrapUtil;
+import netty.cookbook.common.tcp.BootstrapTemplate;
 
 import org.apache.log4j.Logger;
 
@@ -34,6 +34,6 @@ public class PurchaseServer {
 				});
 			}
 		};
-		NettyBootstrapUtil.newServerBootstrap(HOST, PORT, initializer);
+		BootstrapTemplate.newServerBootstrap(HOST, PORT, initializer);
 	}
 }

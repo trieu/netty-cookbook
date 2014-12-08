@@ -1,4 +1,4 @@
-package netty.cookbook.chapter2.recipe1;
+package netty.cookbook.chapter2.recipe3;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
@@ -6,7 +6,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import netty.cookbook.common.CallbackProcessor;
 import netty.cookbook.common.model.PurchaseData;
-import netty.cookbook.common.tcp.NettyBootstrapUtil;
+import netty.cookbook.common.tcp.BootstrapTemplate;
 
 public class PurchaseClient {
 	String host; int port;
@@ -26,7 +26,7 @@ public class PurchaseClient {
 				p.addLast(clientHandler);
 			}
 		};
-		NettyBootstrapUtil.newClientBootstrap(host, port, initializer );
+		BootstrapTemplate.newClientBootstrap(host, port, initializer );
     	return this;
     }    
     public static void main(String[] args) throws Exception {    

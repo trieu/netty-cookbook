@@ -1,4 +1,4 @@
-package netty.cookbook.common;
+package netty.cookbook.chapter2.recipe6;
 
 import io.netty.buffer.ByteBuf;
 

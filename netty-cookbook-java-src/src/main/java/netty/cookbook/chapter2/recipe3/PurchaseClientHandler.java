@@ -1,4 +1,4 @@
-package netty.cookbook.chapter2.recipe1;
+package netty.cookbook.chapter2.recipe3;
 
 
 import netty.cookbook.common.CallbackProcessor;

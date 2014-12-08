@@ -6,12 +6,13 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class TrackingLogHandler extends
+public class HeartBeatHandler extends
 		SimpleChannelInboundHandler<DatagramPacket> {
 	private static final Queue<String> logQueue = new LinkedList<String>();
 	static String log(String log) {
@@ -47,6 +48,7 @@ public class TrackingLogHandler extends
 	protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket packet) throws Exception {
 		System.err.println(packet);
 		String s = packet.content().toString(CharsetUtil.UTF_8);
-		ctx.write(new DatagramPacket(Unpooled.copiedBuffer(log(s), CharsetUtil.UTF_8), packet.sender()));
+		System.out.println(s);
+		ctx.write(new DatagramPacket(Unpooled.copiedBuffer("I'm alive at "+new Date(), CharsetUtil.UTF_8), packet.sender()));
 	}
 }

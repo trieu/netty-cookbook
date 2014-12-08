@@ -15,7 +15,7 @@ import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
-import netty.cookbook.common.tcp.NettyBootstrapUtil;
+import netty.cookbook.common.tcp.BootstrapTemplate;
 
 public class HttpDownloader {
 	public static class HttpDownloadHandler extends
@@ -72,6 +72,6 @@ public class HttpDownloader {
 		String url = "http://www.mc2ads.com";
 		File file = new File("./data/www.mc2ads.com.html");
 		ChannelHandler handler = new HttpDownloadHandler(file);
-		NettyBootstrapUtil.newHttpClientBootstrap(url, handler);
+		BootstrapTemplate.newHttpClientBootstrap(url, handler);
 	}
 }
