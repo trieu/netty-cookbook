@@ -22,47 +22,49 @@ public class HttpDownloader {
 			SimpleChannelInboundHandler<HttpObject> {
 		int written = 0;
 		File file;
-		FileOutputStream outputStream;
-		FileChannel writtenFileChannel;
+		FileOutputStream outStream;
+		FileChannel fileChnl;
 		public HttpDownloadHandler(File file) {
 			super();
 			this.file = file;
 		}
-		void openFileChannel() throws FileNotFoundException {
-			outputStream = new FileOutputStream(file);
-			writtenFileChannel = outputStream.getChannel();
+		void initFileChannel() throws FileNotFoundException {
+			outStream = new FileOutputStream(file);
+			fileChnl = outStream.getChannel();
 		}
-		void writeFileContent(ByteBuf byteBuf) throws IOException {
-			int curWritten = 0;
+		void writeBytesToFile(ByteBuf byteBuf) throws IOException {
+			int writtenIndex = 0;
 			try {
 				ByteBuffer byteBuffer = byteBuf.nioBuffer();
-				curWritten += writtenFileChannel.write(byteBuffer, written);
-				written += curWritten;
-				byteBuf.readerIndex(byteBuf.readerIndex() + curWritten);
-				writtenFileChannel.force(false);
+				writtenIndex += fileChnl.write(byteBuffer, written);
+				written += writtenIndex;
+				byteBuf.readerIndex(byteBuf.readerIndex() + writtenIndex);
+				fileChnl.force(false);
 			} catch (Exception e) {
-				writtenFileChannel.close();
-				outputStream.close();
+				fileChnl.close();
+				outStream.close();
 			}
 		}
 		@Override
-		protected void channelRead0(ChannelHandlerContext ctx, HttpObject msg)
-				throws Exception {
-			if (msg instanceof HttpRequest) {
-				openFileChannel();
-			} else if (msg instanceof HttpContent) {
-				if (writtenFileChannel == null) {
-					openFileChannel();
+		protected void channelRead0(ChannelHandlerContext ctx, HttpObject msg) {
+			try {
+				if (msg instanceof HttpRequest) {
+					initFileChannel();
+				} else if (msg instanceof HttpContent) {
+					if (fileChnl == null) {
+						initFileChannel();
+					}
+					ByteBuf byteBuf = ((HttpContent) msg).content();
+					writeBytesToFile(byteBuf);
+				} else if (msg instanceof LastHttpContent) {
+					if (fileChnl != null && outStream != null) {
+						fileChnl.close();
+						outStream.close();
+					}
+					ctx.close();
 				}
-				HttpContent content = (HttpContent) msg;
-				ByteBuf byteBuf = content.content();
-				writeFileContent(byteBuf);
-			} else if (msg instanceof LastHttpContent) {
-				if (writtenFileChannel != null && outputStream != null) {
-					writtenFileChannel.close();
-					outputStream.close();
-				}
-				ctx.close();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}

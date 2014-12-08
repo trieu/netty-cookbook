@@ -53,7 +53,6 @@ public class PurchaseClientHandler extends SimpleChannelInboundHandler<PurchaseD
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
     	 ctx.flush();
-         
          //close the connection after flushing data to client
     	 if(close){
     		 ctx.close();	 

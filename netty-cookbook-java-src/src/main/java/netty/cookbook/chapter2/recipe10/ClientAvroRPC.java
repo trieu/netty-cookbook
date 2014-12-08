@@ -4,6 +4,8 @@ package netty.cookbook.chapter2.recipe10;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+import netty.cookbook.common.LogUtil;
+
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
 import org.apache.avro.util.Utf8;
@@ -21,13 +23,13 @@ public class ClientAvroRPC {
     	}
         NettyTransceiver client = new NettyTransceiver(new InetSocketAddress(10000));     
         Mail proxy = (Mail) SpecificRequestor.getClient(Mail.class, client);
-        System.out.println("ClientAvroRPC built, got proxy");     
+        LogUtil.println("ClientAvroRPC built OK, got proxy, ready to send data ...");     
         Message message = new Message();
         message.setTo(new Utf8(args[0]));
         message.setFrom(new Utf8(args[1]));
         message.setBody(new Utf8(args[2]));
-        System.out.println("Calling proxy.send with message:  " + message.toString());
-        System.out.println("Result: " + proxy.send(message));       
+        LogUtil.println("Calling proxy.send with message:  " + message.toString());
+        LogUtil.println("Result from server: " + proxy.send(message)); 
         client.close();        
     }
 }
