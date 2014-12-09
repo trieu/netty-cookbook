@@ -17,13 +17,11 @@ public final class SimpleSctpServer {
 
     static final int PORT = Integer.parseInt(System.getProperty("port", "8007"));
 
-    public static void main(String[] args) throws Exception {
-        // Configure the server.
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+    public static void main(String[] args) throws Exception {       
+        EventLoopGroup mainLoop = new NioEventLoopGroup(1);
+        EventLoopGroup workerLoop = new NioEventLoopGroup();
         try {
-            ServerBootstrap b = new ServerBootstrap();
-            b.group(bossGroup, workerGroup)
+        	ChannelFuture f = new ServerBootstrap().group(mainLoop, workerLoop)
              .channel(NioSctpServerChannel.class)
              .option(ChannelOption.SO_BACKLOG, 100)
              .handler(new LoggingHandler(LogLevel.INFO))
@@ -33,15 +31,11 @@ public final class SimpleSctpServer {
                 	 ChannelPipeline p = ch.pipeline();                	
                      p.addLast(new SimpleSctpServerHandler());
                  }
-             });
-            // Start the server.
-            ChannelFuture f = b.bind(PORT).sync();
-            // Wait until the server socket is closed.
+             }).bind(PORT).sync();            
             f.channel().closeFuture().sync();
-        } finally {
-            // Shut down all event loops to terminate all threads.
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
+        } finally {            
+            mainLoop.shutdownGracefully();
+            workerLoop.shutdownGracefully();
         }
     }
 }

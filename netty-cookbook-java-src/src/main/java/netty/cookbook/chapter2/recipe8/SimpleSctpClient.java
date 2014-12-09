@@ -17,27 +17,22 @@ public final class SimpleSctpClient {
     static final int PORT = Integer.parseInt(System.getProperty("port", "8007"));
     
     public static void main(String[] args) throws Exception {        
-        EventLoopGroup group = new NioEventLoopGroup();
-        try {
-            Bootstrap b = new Bootstrap();
-            b.group(group)
+        EventLoopGroup loopGroup = new NioEventLoopGroup();
+        try {            
+        	ChannelFuture f = new Bootstrap().group(loopGroup)
              .channel(NioSctpChannel.class)
-             .option(SctpChannelOption.SCTP_NODELAY, true) // set SCTP option
+             // set SCTP option
+             .option(SctpChannelOption.SCTP_NODELAY, true) 
              .handler(new ChannelInitializer<SctpChannel>() {
                  @Override
                  public void initChannel(SctpChannel ch) throws Exception {
-                	 ChannelPipeline p = ch.pipeline();               
-                	 //add the SCTP client handler
+                	 ChannelPipeline p = ch.pipeline();
                      p.addLast(new SimpleSctpClientHandler());
                  }
-             });
-            // Start the client.
-            ChannelFuture f = b.connect(HOST, PORT).sync();
-            // Wait until the connection is closed.
+             }).connect(HOST, PORT).sync();            
             f.channel().closeFuture().sync();
         } finally {
-            // Shut down the event loop to terminate all threads.
-            group.shutdownGracefully();
+        	loopGroup.shutdownGracefully();
         }
     }
 }
