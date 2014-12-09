@@ -14,7 +14,7 @@ import io.netty.util.CharsetUtil;
 import java.net.InetSocketAddress;
 import java.util.Date;
 
-import netty.cookbook.common.tcp.BootstrapTemplate;
+import netty.cookbook.common.BootstrapTemplate;
 
 public class ServerHealthChecker {
 	static final int PORT = 8080;

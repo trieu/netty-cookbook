@@ -1,4 +1,4 @@
-package netty.cookbook.chapter2.recipe12;
+package netty.cookbook.chapter4.recipe5;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

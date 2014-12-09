@@ -3,7 +3,7 @@ package netty.cookbook.chapter2.recipe9;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import netty.cookbook.common.tcp.BootstrapTemplate;
+import netty.cookbook.common.BootstrapTemplate;
 
 import com.butor.netty.handler.codec.ftp.CrlfStringDecoder;
 import com.butor.netty.handler.codec.ftp.DataReceiver;

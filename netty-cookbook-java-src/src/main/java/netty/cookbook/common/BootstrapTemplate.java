@@ -1,4 +1,4 @@
-package netty.cookbook.common.tcp;
+package netty.cookbook.common;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;

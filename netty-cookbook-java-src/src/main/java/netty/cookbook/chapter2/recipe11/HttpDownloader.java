@@ -15,7 +15,7 @@ import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
-import netty.cookbook.common.tcp.BootstrapTemplate;
+import netty.cookbook.common.BootstrapTemplate;
 
 public class HttpDownloader {
 	public static class HttpDownloadHandler extends

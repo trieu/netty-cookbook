@@ -1,6 +1,6 @@
-package netty.cookbook.chapter2.recipe12;
+package netty.cookbook.chapter4.recipe5;
 
-import netty.cookbook.chapter2.recipe12.WebUrl.FacebookStats;
+import netty.cookbook.chapter4.recipe5.WebUrl.FacebookStats;
 
 public class PubSubDemo {
 

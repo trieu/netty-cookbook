@@ -2,7 +2,7 @@ package netty.cookbook.chapter2.recipe7;
 
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import netty.cookbook.common.tcp.BootstrapTemplate;
+import netty.cookbook.common.BootstrapTemplate;
 
 /**
  * @author trieu
