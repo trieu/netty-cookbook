@@ -1,5 +1,6 @@
 package netty.cookbook.chapter2.recipe7;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -49,6 +50,7 @@ public class HeartBeatHandler extends
 		System.err.println(packet);
 		String s = packet.content().toString(CharsetUtil.UTF_8);
 		System.out.println(s);
-		ctx.write(new DatagramPacket(Unpooled.copiedBuffer("I'm alive at "+new Date(), CharsetUtil.UTF_8), packet.sender()));
+		ByteBuf buf = Unpooled.copiedBuffer("I'm alive at "+new Date(), CharsetUtil.UTF_8);
+		ctx.write(new DatagramPacket(buf, packet.sender()));
 	}
 }
