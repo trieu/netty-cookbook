@@ -48,6 +48,7 @@ public class BootstrapTemplate {
             Bootstrap b = new Bootstrap();
             ChannelFuture f = b.group(group)
             		.channel(NioSocketChannel.class)
+            		.option(ChannelOption.SO_KEEPALIVE, true)
             		.handler(new LoggingHandler(LogLevel.INFO))
             		.handler(initializer)
             		.connect(host, port).sync();            
