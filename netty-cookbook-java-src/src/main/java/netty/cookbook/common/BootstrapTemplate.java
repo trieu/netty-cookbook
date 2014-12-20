@@ -133,6 +133,39 @@ public class BootstrapTemplate {
 		}	
 	}
 	
+	public static void newHttpServerBootstrap(String ip, int port, ChannelInitializer<SocketChannel>  channelInitializer){
+		// Configure the server.
+		int numCPUs = Runtime.getRuntime().availableProcessors();
+        EventLoopGroup bossGroup = new NioEventLoopGroup(numCPUs);
+        EventLoopGroup workerGroup = new NioEventLoopGroup(numCPUs);
+        try {        	
+        	//public service processor
+            ServerBootstrap publicServerBootstrap = new ServerBootstrap();            
+            publicServerBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class);
+            publicServerBootstrap.childOption(ChannelOption.TCP_NODELAY, false)
+            .childOption(ChannelOption.SO_KEEPALIVE, false)
+            .childHandler(channelInitializer); 
+            
+            //bind to public access host info
+            Channel ch1;
+            if("*".equals(ip)){
+            	ch1 = publicServerBootstrap.bind(port).sync().channel();
+            } else {
+            	ch1 = publicServerBootstrap.bind(ip, port).sync().channel();
+            }
+            System.out.println(String.format("Started OK HttpServer at %s:%d", ip, port));
+            ch1.config().setConnectTimeoutMillis(1800);            
+            ch1.closeFuture().sync();             
+            System.out.println("Shutdown...");            
+        } catch (Throwable e) {
+			e.printStackTrace();
+			System.exit(1);
+        } finally {
+            bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
+        }
+	}
+	
 	static public class HttpDownloadertInitializer extends ChannelInitializer<SocketChannel> {
 	    private final SslContext sslCtx;
 	    private final ChannelHandler handler;

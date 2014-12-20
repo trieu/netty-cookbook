@@ -26,7 +26,9 @@ dependencies {
     		,'redis.clients:jedis:2.6.1'    		
     		    		
     		,'org.apache.avro:avro:1.7.7'
-    		,'org.apache.avro:avro-ipc:1.7.7'    		
+    		,'org.apache.avro:avro-ipc:1.7.7'    	
+    		
+    		,'com.strategicgains:RestExpress:0.10.5'		    			
     		
     		, fileTree(dir: 'lib', include: '**/*.jar') 			
     		)
