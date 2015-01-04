@@ -1,1 +1,1 @@
--- Chapter 1 code of Netty Cookbook
+Netty Cookbook - chapter 1 code
