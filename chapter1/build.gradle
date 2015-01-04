@@ -24,35 +24,3 @@ dependencies {
     		)
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
-
-test {
-    systemProperties 'property': 'value'
-}
-
-uploadArchives {
-    repositories {
-       flatDir {
-           dirs 'repos'
-       }
-    }
-}
-
-task listJars << {
-    configurations.compile.each { File file -> println file.name }
-}
-
-task printClasspathStringJars << {   
-    println getClasspathStringJars()
-}
-
-def getClasspathStringJars() {
-	def baseFolder = 'deps/'
-    def fileNames = []
-    configurations.compile.each { File file -> fileNames.add(baseFolder + file.name) }
-    
-    def classpath = fileNames.join(" ; ")    
-    return classpath
-}
-
-
-
