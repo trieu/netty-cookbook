@@ -1,4 +1,4 @@
-package chapter4.recipe1;
+package chapter3.recipe4;
 
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.restexpress.Request;

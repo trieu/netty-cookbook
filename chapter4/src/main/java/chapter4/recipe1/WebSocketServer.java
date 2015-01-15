@@ -1,4 +1,4 @@
-package chapter3.recipe1;
+package chapter4.recipe1;
 
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.restexpress.Request;
@@ -9,7 +9,7 @@ import org.restexpress.RestExpress;
  * @author toddf
  * @since June 29, 2012
  */
-public class Echo {
+public class WebSocketServer {
 	static class RestfulHandler {
 		public String read(Request req, Response res) {
 			String value = req.getHeader("echo");
