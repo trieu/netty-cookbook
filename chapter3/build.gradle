@@ -17,8 +17,7 @@ dependencies {
     		,'org.apache.commons:commons-lang3:3.3.2'    		
     		,'log4j:log4j:1.2.17'   
     		,'org.slf4j:slf4j-log4j12:1.7.7'  		
-    		
-    			    		
+    		    			    		
     		
     		,'com.google.code.gson:gson:2.3'    		
     		,'com.google.guava:guava:18.0'    		
@@ -27,8 +26,19 @@ dependencies {
     		,'redis.clients:jedis:2.6.1'  
     		,'org.yaml:snakeyaml:1.14'    	
     		
+    		//recipe 3.4
     		,'com.strategicgains:RestExpress:0.10.5'  
     				
+    		//recipe 3.2
+    		,'org.springframework:spring-core:4.1.4.RELEASE'
+    		,'org.springframework:spring-context:4.1.4.RELEASE'
+    		,'org.springframework:spring-webmvc:4.1.4.RELEASE'
+    		,'org.springframework:spring-aspects:4.1.4.RELEASE'
+    		,'org.springframework:spring-aop:4.1.4.RELEASE'  
+    		,'org.springframework:spring-test:4.1.4.RELEASE'    		    		  		
+    		,'org.apache.geronimo.specs:geronimo-servlet_3.0_spec:1.0'
+    		,'org.thymeleaf:thymeleaf-spring4:2.1.4.RELEASE'    		   		
+    		
     		)
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
