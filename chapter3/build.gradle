@@ -7,6 +7,7 @@ version = '1.0'
 
 repositories {
     mavenCentral()
+   
 }
 
 dependencies {
@@ -26,8 +27,12 @@ dependencies {
     		,'redis.clients:jedis:2.6.1'  
     		,'org.yaml:snakeyaml:1.14'    	
     		
-    		//recipe 3.4
-    		,'com.strategicgains:RestExpress:0.10.5'  
+    		//recipe 3.4    		
+    		, fileTree(dir: 'lib', include: '**/*.jar')  
+    		,'com.fasterxml.jackson.core:jackson-core:2.5.0'  
+    		,'com.fasterxml.jackson.core:jackson-databind:2.5.0'
+    		,'com.thoughtworks.xstream:xstream:1.4.7'
+    		
     				
     		//recipe 3.2
     		,'org.springframework:spring-core:4.1.4.RELEASE'

@@ -22,6 +22,7 @@ import io.netty.util.CharsetUtil;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -35,6 +36,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UriUtils;
 
 public class ServletNettyHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+
+	private static final String UTF_8 = "UTF-8";
 
 	private final Servlet servlet;
 
@@ -68,6 +71,7 @@ public class ServletNettyHandler extends SimpleChannelInboundHandler<FullHttpReq
 		}
 
 		ByteBuf bbContent = fullHttpRequest.content();
+		System.out.println(uriComponents.getPath() + " \n  => " + fullHttpRequest.getMethod().name()+ " " + fullHttpRequest.content().toString(Charset.defaultCharset()));
 		if(bbContent.hasArray()) {
 			byte[] baContent = bbContent.array();
 			servletRequest.setContent(baContent);
@@ -75,15 +79,15 @@ public class ServletNettyHandler extends SimpleChannelInboundHandler<FullHttpReq
 
 		try {
 			if (uriComponents.getQuery() != null) {
-				String query = UriUtils.decode(uriComponents.getQuery(), "UTF-8");
+				String query = UriUtils.decode(uriComponents.getQuery(), UTF_8);
 				servletRequest.setQueryString(query);
 			}
 
 			for (Entry<String, List<String>> entry : uriComponents.getQueryParams().entrySet()) {
 				for (String value : entry.getValue()) {
 					servletRequest.addParameter(
-							UriUtils.decode(entry.getKey(), "UTF-8"),
-							UriUtils.decode(value, "UTF-8"));
+							UriUtils.decode(entry.getKey(), UTF_8),
+							UriUtils.decode(value, UTF_8));
 				}
 			}
 		}
@@ -97,6 +101,7 @@ public class ServletNettyHandler extends SimpleChannelInboundHandler<FullHttpReq
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		cause.printStackTrace();
+		System.err.println(cause.getMessage());
 		if (ctx.channel().isActive()) {
 			sendError(ctx, INTERNAL_SERVER_ERROR);
 		}
