@@ -26,6 +26,7 @@ dependencies {
     		,'io.reactivex:rxjava:1.0.1'    		
     		,'redis.clients:jedis:2.6.1'  
     		,'org.yaml:snakeyaml:1.14'    	
+    		
     		,'com.strategicgains:RestExpress:0.10.5'  
     				
     		)
