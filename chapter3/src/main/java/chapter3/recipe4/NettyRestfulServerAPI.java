@@ -15,7 +15,7 @@ import org.restexpress.RestExpress;
  */
 public class NettyRestfulServerAPI {
 	static class RestfulHandler {
-		public String read(Request req, Response res) {
+		public String create(Request req, Response res){
 			String value = req.getHeader("echo");
 			res.setContentType("text/xml");
 			System.out.println("data " + req.getBody().toString(Charset.defaultCharset()));
@@ -27,12 +27,15 @@ public class NettyRestfulServerAPI {
 						"<http_test><value>%s</value></http_test>", value);
 			}
 		}
+		public String read(Request req, Response res) {
+			return "<data>hello</data>";
+		}
 	}
 
 	public static void main(String[] args) {
 		RestExpress server = new RestExpress().setName("Echo");
 
-		server.uri("/echo", new RestfulHandler()).method(HttpMethod.GET).noSerialization();
+		server.uri("/echo", new RestfulHandler()).method(HttpMethod.GET,HttpMethod.POST).noSerialization();
 
 		server.bind(8000);
 		server.awaitShutdown();
