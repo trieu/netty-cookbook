@@ -16,6 +16,6 @@ public class BasicHttpResponseHandler implements HttpEventHandler {
 
 	public HttpResponse handle(HttpRequest req, QueryStringDecoder q)
 			throws Exception {
-		return HttpEventHandler.build(data, status, ContentTypePool.TEXT_UTF8);
+		return HttpEventHandler.buildHttpResponse(data, status, ContentTypePool.TEXT_UTF8);
 	}
 }

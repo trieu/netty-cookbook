@@ -46,12 +46,12 @@ public class HelloController {
 
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public ResponseEntity<String> update(HttpEntity<byte[]> requestEntity) {
-		String requestHeader = requestEntity.getHeaders().getFirst("MyRequestHeader");
+		//String requestHeader = requestEntity.getHeaders().getFirst("MyRequestHeader");
 		byte[] requestBody = requestEntity.getBody();
 
 		// do something with request header and body
-		System.out.println("requestHeader "+new String(requestHeader));
-		System.out.println("requestBody "+requestEntity.toString());
+		System.out.println("requestBody "+new String(requestBody));
+		System.out.println("requestEntity "+requestEntity.toString());
 
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.set("MyResponseHeader", "MyValue");

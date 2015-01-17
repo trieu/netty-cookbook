@@ -1,4 +1,4 @@
-package chapter3.recipe2;
+package netty.cookbook.common.springmvc;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
@@ -48,13 +48,13 @@ public class ServletNettyHandler extends SimpleChannelInboundHandler<FullHttpReq
 		this.servletContext = servlet.getServletConfig().getServletContext();
 	}
 
-	private MockHttpServletRequest createServletRequest(FullHttpRequest fullHttpRequest) {
-		UriComponents uriComponents = UriComponentsBuilder.fromUriString(fullHttpRequest.getUri()).build();
+	private MockHttpServletRequest createServletRequest(FullHttpRequest fullHttpReq) {
+		UriComponents uriComponents = UriComponentsBuilder.fromUriString(fullHttpReq.getUri()).build();
 
 		MockHttpServletRequest servletRequest = new MockHttpServletRequest(this.servletContext);
 		servletRequest.setRequestURI(uriComponents.getPath());
 		servletRequest.setPathInfo(uriComponents.getPath());
-		servletRequest.setMethod(fullHttpRequest.getMethod().name());
+		servletRequest.setMethod(fullHttpReq.getMethod().name());
 
 		if (uriComponents.getScheme() != null) {
 			servletRequest.setScheme(uriComponents.getScheme());
@@ -65,17 +65,18 @@ public class ServletNettyHandler extends SimpleChannelInboundHandler<FullHttpReq
 		if (uriComponents.getPort() != -1) {
 			servletRequest.setServerPort(uriComponents.getPort());
 		}
-
-		for (String name : fullHttpRequest.headers().names()) {
-			servletRequest.addHeader(name, fullHttpRequest.headers().get(name));
+		for (String name : fullHttpReq.headers().names()) {
+			servletRequest.addHeader(name, fullHttpReq.headers().get(name));
 		}
 
-		ByteBuf bbContent = fullHttpRequest.content();
-		System.out.println(uriComponents.getPath() + " \n  => " + fullHttpRequest.getMethod().name()+ " " + fullHttpRequest.content().toString(Charset.defaultCharset()));
-		if(bbContent.hasArray()) {
-			byte[] baContent = bbContent.array();
-			servletRequest.setContent(baContent);
+		ByteBuf bbContent = fullHttpReq.content();		
+		if(bbContent.hasArray()) {			
+			servletRequest.setContent(bbContent.array());
+		} else {
+			servletRequest.setContent(bbContent.toString(Charset.forName(UTF_8)).getBytes());
 		}
+		
+		System.out.println(uriComponents.getPath() + " \n  => " + fullHttpReq.getMethod().name()+ " " + fullHttpReq.content().toString(Charset.defaultCharset()));
 
 		try {
 			if (uriComponents.getQuery() != null) {
@@ -94,7 +95,6 @@ public class ServletNettyHandler extends SimpleChannelInboundHandler<FullHttpReq
 		catch (UnsupportedEncodingException ex) {
 			// shouldn't happen
 		}
-
 		return servletRequest;
 	}
 

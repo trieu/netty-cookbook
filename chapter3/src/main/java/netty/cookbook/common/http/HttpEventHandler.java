@@ -11,6 +11,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringDecoder;
 
 @FunctionalInterface
@@ -20,7 +21,7 @@ public interface HttpEventHandler {
 	
 	static final String HEADER_CONNECTION_CLOSE = "Close";
 	
-	public static HttpResponse build(Object data, int status, String ctype){
+	public static HttpResponse buildHttpResponse(Object data, int status, String ctype){
 		ByteBuf byteBuf = Unpooled.copiedBuffer(String.valueOf(data).getBytes());
 		HttpResponseStatus httpStatus = HttpResponseStatus.valueOf(status);
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, httpStatus, byteBuf);
@@ -30,7 +31,17 @@ public interface HttpEventHandler {
 		return response;
 	}
 	
+	public static FullHttpResponse buildFullHttpResponse(Object data, int status, String ctype){
+		ByteBuf byteBuf = Unpooled.copiedBuffer(String.valueOf(data).getBytes());
+		HttpResponseStatus httpStatus = HttpResponseStatus.valueOf(status);		
+		final FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, httpStatus, byteBuf);
+		response.headers().set(CONTENT_TYPE, ctype);
+		response.headers().set(CONTENT_LENGTH, byteBuf.readableBytes());
+		response.headers().set(CONNECTION, HEADER_CONNECTION_CLOSE);
+		return response;
+	}
+	
 	public static HttpResponse build(Object data, int status){
-		return build(data, status, ContentTypePool.TEXT_UTF8);
+		return buildHttpResponse(data, status, ContentTypePool.TEXT_UTF8);
 	}
 }

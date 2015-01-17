@@ -4,13 +4,16 @@ import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.reactivex.netty.RxNetty;
 import io.reactivex.netty.protocol.http.server.HttpServer;
+import io.reactivex.netty.protocol.http.server.HttpServerRequest;
+import io.reactivex.netty.protocol.http.server.HttpServerResponse;
 
 import java.nio.charset.Charset;
 
 public class NettyRxJavaServer {
     public static void main(String... args) throws InterruptedException {
-        HttpServer<ByteBuf, ByteBuf> server = RxNetty.createHttpServer(8080, (request, response) -> {
-            System.out.println("Server => Request: " + request.getPath());
+        HttpServer<ByteBuf, ByteBuf> server = RxNetty.createHttpServer(8080, 
+        		(HttpServerRequest<ByteBuf> request, HttpServerResponse<ByteBuf> response) -> {
+            System.out.println("Server => Request: " + request.getPath());            
             try {
                 if ("/error".equals(request.getPath())) {
                     throw new RuntimeException("forced error");

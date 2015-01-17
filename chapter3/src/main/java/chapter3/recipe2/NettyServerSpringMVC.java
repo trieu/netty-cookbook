@@ -3,27 +3,30 @@ package chapter3.recipe2;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import netty.cookbook.common.springmvc.DispatcherServletChannelInitializer;
 
-public class NettyWithSpringWeb {
+public class NettyServerSpringMVC {
 	private final int port;
 
-	public NettyWithSpringWeb(int port) {
+	public NettyServerSpringMVC(int port) {
 		this.port = port;
 	}
 
 	public void run() throws Exception {
 		ServerBootstrap server = new ServerBootstrap();
-		NioEventLoopGroup group = new NioEventLoopGroup();
+		NioEventLoopGroup pGroup = new NioEventLoopGroup();
+		NioEventLoopGroup cGroup = new NioEventLoopGroup();
 		try {
-			server.group(new NioEventLoopGroup(), new NioEventLoopGroup())
+			server.group(pGroup, cGroup)
 					.channel(NioServerSocketChannel.class)
 					.localAddress(port)
-					.childHandler(new DispatcherServletChannelInitializer());
+					.childHandler(new DispatcherServletChannelInitializer(WebConfig.class));
 
 			server.bind().sync().channel().closeFuture().sync();
 		}
 		finally {
-			group.shutdownGracefully();
+			cGroup.shutdownGracefully();
+			pGroup.shutdownGracefully();
 		}
 	}
 
@@ -34,6 +37,6 @@ public class NettyWithSpringWeb {
 		} else {
 			port = 8080;
 		}
-		new NettyWithSpringWeb(port).run();
+		new NettyServerSpringMVC(port).run();
 	}
 }
