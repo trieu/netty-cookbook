@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cross-Origin Resource Sharing (CORS) With jQuery And Netty CORS Handler</title>
+</head>
+<body>
+ 
+    <h1>
+        <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS">Cross-Origin Resource Sharing (CORS)</a> With jQuery And Netty CORS Handler
+    </h1>
+
+ 
+    <h2>
+        AJAX HTTP POST Response
+    </h2> 
+    <pre id="postResponse">
+        <!-- To be populated dynamically. -->
+    </pre> 
+ 
+    <h2>
+        AJAX HTTP DELETE Response
+    </h2>
+ 
+    <pre id="deleteResponse">
+        <!-- To be populated dynamically. -->
+    </pre> 
+ 
+    <!-- Load our JavaScript and make some CORS requests. -->
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript">
+
+  		//the POST request execution with CORS
+        var makePOSTRequest = function(){
+
+            // Make the POST request.
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:8080/cors/this-is-post-http-request",
+                headers: {
+                    'MyCustomHeader': 'important information is here'
+                },
+                contentType: "application/json",
+                data: JSON.stringify({
+                	id : 123,
+                    name: "Trieu",
+                    age: 29
+                }),
+                dataType: "text",
+                success: function( response ){
+                    $( "#postResponse" ).text( response );
+                },
+                error: function( error ){
+
+                    // Log any error.
+                    console.log( "ERROR:", error );
+
+                },
+                complete: function(){
+                    // When this completes, execute DELETE request.
+                    makeDELETERequest();
+                }
+            });
+        };
+
+
+        //the DELETE request execution with CORS
+        var makeDELETERequest = function(){
+        	
+            // Make the DELETE request.
+            $.ajax({
+                type: "DELETE",
+                url: "http://localhost:8080/cors/this-is-delete-http-request",
+                contentType: "application/json",
+                data: JSON.stringify({
+                	id : 123,
+                    name: "Trieu",
+                    age: 29
+                }),
+                dataType: "text",
+                success: function( response ){
+                    // Put the plain text in the PRE tag.
+                    $( "#deleteResponse" ).text( response );
+                },
+                error: function( error ){
+                    // Log any error.
+                    console.log( "ERROR:", error );
+                }
+            });
+
+        };
+
+        // Execute the PUT request.      
+        $( document ).ready(function() {
+        	makePOSTRequest();
+        });
+
+    </script>
+</body>
+</html>
