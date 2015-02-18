@@ -19,6 +19,7 @@ public interface HttpEventHandler {
 	
 	public HttpResponse handle(HttpRequest req, QueryStringDecoder query) throws Exception;
 	
+	
 	static final String HEADER_CONNECTION_CLOSE = "Close";
 	
 	public static HttpResponse buildHttpResponse(Object data, int status, String ctype){

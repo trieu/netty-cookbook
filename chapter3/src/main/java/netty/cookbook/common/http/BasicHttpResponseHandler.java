@@ -5,8 +5,8 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.QueryStringDecoder;
 
 public class BasicHttpResponseHandler implements HttpEventHandler {
-	String data;
-	int status;
+	final String data;
+	final int status;
 
 	public BasicHttpResponseHandler(String data, int status) {
 		super();
