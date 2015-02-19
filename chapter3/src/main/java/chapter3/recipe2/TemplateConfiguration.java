@@ -8,8 +8,7 @@ import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 @Configuration
-public class TemplateConfiguration {
- 
+public class TemplateConfiguration { 
     @Bean public ViewResolver viewResolver() {
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setTemplateMode("XHTML");
@@ -21,6 +20,5 @@ public class TemplateConfiguration {
         ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
         viewResolver.setTemplateEngine(engine);
         return viewResolver;
-    }
- 
+    } 
 }

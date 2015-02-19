@@ -21,7 +21,6 @@ public class NettyServerSpringMVC {
 					.channel(NioServerSocketChannel.class)
 					.localAddress(port)
 					.childHandler(new DispatcherServletChannelInitializer(WebConfig.class));
-
 			server.bind().sync().channel().closeFuture().sync();
 		}
 		finally {
