@@ -1,5 +1,7 @@
 package chapter3.recipe9;
 
+import static io.netty.buffer.Unpooled.copiedBuffer;
+import static io.netty.buffer.Unpooled.unreleasableBuffer;
 import static io.netty.handler.codec.http.HttpHeaders.is100ContinueExpected;
 import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
@@ -9,7 +11,6 @@ import static io.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -22,6 +23,8 @@ import io.netty.util.CharsetUtil;
 import java.util.Date;
 
 public class SpdyServerHandler extends SimpleChannelInboundHandler<Object> {
+	
+	static final ByteBuf RESPONSE_BYTES = unreleasableBuffer(copiedBuffer("<h1>Hello World on " + new Date()+"</h1>", CharsetUtil.UTF_8));
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -33,10 +36,10 @@ public class SpdyServerHandler extends SimpleChannelInboundHandler<Object> {
             }
             boolean keepAlive = isKeepAlive(req);
 
-            ByteBuf content = Unpooled.copiedBuffer("Hello World " + new Date(), CharsetUtil.UTF_8);
+            ByteBuf content = RESPONSE_BYTES.duplicate();
 
             FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK, content);
-            response.headers().set(CONTENT_TYPE, "text/plain; charset=UTF-8");
+            response.headers().set(CONTENT_TYPE, "text/html; charset=UTF-8");
             response.headers().set(CONTENT_LENGTH, response.content().readableBytes());
 
             if (!keepAlive) {

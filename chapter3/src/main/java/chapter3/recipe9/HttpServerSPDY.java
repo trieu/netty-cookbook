@@ -13,7 +13,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import netty.cookbook.common.BootstrapTemplate;
 
-public class NettyHttpServerWithSPDY {
+public class HttpServerSPDY {
 	
 	//http://www.chromium.org/spdy
 
