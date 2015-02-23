@@ -21,6 +21,8 @@ import io.netty.handler.codec.http.DefaultCookie;
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpContentDecompressor;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
@@ -118,11 +120,11 @@ public class BootstrapTemplate {
 			// Prepare the HTTP request.
 			HttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uri.getRawPath());
 			HttpHeaders headers = request.headers();
-			headers.set(HttpHeaders.Names.HOST, host);
-			headers.set(HttpHeaders.Names.CONNECTION,HttpHeaders.Values.CLOSE);
-			headers.set(HttpHeaders.Names.ACCEPT_ENCODING,HttpHeaders.Values.GZIP);
+			headers.set(HttpHeaderNames.HOST, host);
+			headers.set(HttpHeaderNames.CONNECTION,HttpHeaderValues.CLOSE);
+			headers.set(HttpHeaderNames.ACCEPT_ENCODING,HttpHeaderValues.GZIP);
 			// Set some example cookies.
-			headers.set(HttpHeaders.Names.COOKIE, ClientCookieEncoder.encode(new DefaultCookie("my-cookie", "foo")));
+			headers.set(HttpHeaderNames.COOKIE, ClientCookieEncoder.encode(new DefaultCookie("my-cookie", "foo")));
 			ch.writeAndFlush(request);
 			// Wait for the server to close the connection.
 			ch.closeFuture().sync();
