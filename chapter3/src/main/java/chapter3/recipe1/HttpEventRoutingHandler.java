@@ -7,24 +7,28 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.QueryStringDecoder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import netty.cookbook.common.http.BasicHttpResponseHandler;
 import netty.cookbook.common.http.HttpEventHandler;
 
 @Sharable
-public class RoutingHttpEventHandler extends SimpleChannelInboundHandler<Object> {
+public class HttpEventRoutingHandler extends SimpleChannelInboundHandler<Object> {
 
 	private Map<UriMatcher, HttpEventHandler> routes = new LinkedHashMap<>();
-	private Map<String, HttpEventHandler> cachedRoutes = new HashMap<>();
+	private Map<String, List<HttpEventHandler>> cachedRoutes = new HashMap<>();
 	private static final String STARTS_WITH = "startsWith:";
 	private static final String ENDS_WITH = "endsWith:";
 	private static final String EQUALS = "equals:";
+	private static final int MAX_SIZE_POOL_HANDLER = 1000;
 	private static final BasicHttpResponseHandler HANDLER_404 = new BasicHttpResponseHandler("Not found", 404);
 		
-	public RoutingHttpEventHandler(Map<String, HttpEventHandler> routes)
+	public HttpEventRoutingHandler(Map<String, HttpEventHandler> routes)
 			throws Exception {	
 		setupRoutes(routes);
 	}
@@ -92,16 +96,34 @@ public class RoutingHttpEventHandler extends SimpleChannelInboundHandler<Object>
 			ctx.flush().close();
 		}
 	}
+	
+	public static int randInt(int min, int max) {	    
+	    return new Random().nextInt((max - min)) + min;
+	}
+	
+	static List<HttpEventHandler> newHttpHandlerPool(int max, HttpEventHandler h){
+		List<HttpEventHandler> pool = new ArrayList<HttpEventHandler>(max);
+		for (int i = 0; i < max; i++) {
+			HttpEventHandler newHandler = HttpEventHandler.deepClone(h);
+			pool.add(newHandler);
+			System.out.println(newHandler);
+		}
+		return pool;
+	}
 
 	private HttpEventHandler findHandler(HttpRequest request, String path) throws Exception {
-		HttpEventHandler h = cachedRoutes.get(path);
-		if(h != null){
-			return h;
+		int index = randInt(0, MAX_SIZE_POOL_HANDLER);
+		List<HttpEventHandler> pool = cachedRoutes.get(path);
+		if(pool != null){
+			if(pool.size()>0){
+				return pool.get(index);	
+			}			
 		}
+		HttpEventHandler h = null;
 		for (Map.Entry<UriMatcher, HttpEventHandler> m : routes.entrySet()) {
 			if (m.getKey().match(path)) {
 				h = m.getValue();
-				cachedRoutes.put(path, h);
+				cachedRoutes.put(path, newHttpHandlerPool(MAX_SIZE_POOL_HANDLER, h));
 				break;
 			}
 		}		

@@ -9,7 +9,6 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.QueryStringDecoder;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,16 +26,16 @@ public class HttpServerWithRouter {
 	
 		Map<String, HttpEventHandler> routes = new LinkedHashMap<>();		
 		routes.put("startsWith:/hello", (HttpRequest req, QueryStringDecoder q) -> {
-			String s = "Hello " + q.parameters().getOrDefault("name", Arrays.asList("guest")).get(0);
-    		return HttpEventHandler.build(s, 200);
+			String s = "Hello " ;//+ q.parameters().getOrDefault("name", Arrays.asList("guest")).get(0);
+    		return HttpEventHandler.response(s, 200);
     	});
 		routes.put("endsWith:/date", (HttpRequest req, QueryStringDecoder q) -> {
     		System.out.println(req.headers().get(Names.COOKIE));
-    		return HttpEventHandler.build(new Date(), 200);
+    		return HttpEventHandler.response(new Date(), 200);
     	});
 		routes.put("equals:/about", new BasicHttpResponseHandler("This is a Http Netty Server", 200));
 		
-		RoutingHttpEventHandler routerHandler = new RoutingHttpEventHandler(routes);
+		HttpEventRoutingHandler routerHandler = new HttpEventRoutingHandler(routes);
 		ChannelInitializer<SocketChannel> channelInitializer = new ChannelInitializer<SocketChannel>() {			
 			@Override
 			protected void initChannel(SocketChannel ch) throws Exception {

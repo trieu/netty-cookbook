@@ -137,13 +137,13 @@ public class BootstrapTemplate {
 		// Configure the server.
 		int numCPUs = Runtime.getRuntime().availableProcessors();
         EventLoopGroup bossGroup = new NioEventLoopGroup(numCPUs);
-        EventLoopGroup workerGroup = new NioEventLoopGroup(numCPUs);
+        EventLoopGroup workerGroup = new NioEventLoopGroup(numCPUs*2);
         try {        	
         	//public service processor
             ServerBootstrap publicServerBootstrap = new ServerBootstrap();            
             publicServerBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class);
-            publicServerBootstrap.childOption(ChannelOption.TCP_NODELAY, false)
-            .childOption(ChannelOption.SO_KEEPALIVE, false)
+            publicServerBootstrap.childOption(ChannelOption.TCP_NODELAY, true)
+            .childOption(ChannelOption.SO_KEEPALIVE, true)
             .childHandler(channelInitializer); 
             
             //bind to public access host info
