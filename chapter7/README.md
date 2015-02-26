@@ -1,5 +1,7 @@
 Netty Cookbook - code for chapter 7: High performance Web with HTTP/2
 
+https://http2.github.io
+
 * Recipe 7.1 Using codec-http2 to improve the speed of Web
 * Recipe 7.2 Enabling multiple streams in single connection
 * Recipe 7.3 Setting priority in requests
