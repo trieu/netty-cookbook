@@ -106,7 +106,7 @@ public class HttpEventRoutingHandler extends SimpleChannelInboundHandler<Object>
 		for (int i = 0; i < max; i++) {
 			HttpEventHandler newHandler = HttpEventHandler.deepClone(h);
 			pool.add(newHandler);
-			System.out.println(newHandler);
+			//System.out.println(newHandler);
 		}
 		return pool;
 	}

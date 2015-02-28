@@ -22,7 +22,7 @@ public class HttpServerWithRouter {
 	
 	public static void main(String[] args) throws Exception {
 		String ip = "127.0.0.1";
-		int port = 8888;
+		int port = 8080;
 	
 		Map<String, HttpEventHandler> routes = new LinkedHashMap<>();		
 		routes.put("startsWith:/hello", (HttpRequest req, QueryStringDecoder q) -> {

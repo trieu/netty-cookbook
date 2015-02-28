@@ -1,17 +1,30 @@
 package chapter3.recipe6;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
+import javax.script.Compilable;
+import javax.script.CompiledScript;
 import javax.script.ScriptException;
+import javax.script.SimpleBindings;
+
+import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 public class JavaScriptProcessor {
-	
-	public static class HttpRequest {
+
+	public static class SimpleHttpRequest {
 		String uri;
+
+		public SimpleHttpRequest() {
+			// TODO Auto-generated constructor stub
+		}
+
+		public SimpleHttpRequest(String uri) {
+			super();
+			this.uri = uri;
+		}
 
 		public String getUri() {
 			return uri;
@@ -20,10 +33,10 @@ public class JavaScriptProcessor {
 		public void setUri(String uri) {
 			this.uri = uri;
 		}
-		
+
 	}
-	
-	public static class HttpResponse {
+
+	public static class SimpleHttpResponse {
 		String data;
 		long time;
 
@@ -43,26 +56,38 @@ public class JavaScriptProcessor {
 			this.time = time;
 		}
 
-		
-		
 	}
 
-	public static void main(String[] args) throws FileNotFoundException, ScriptException, NoSuchMethodException {
-		ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-		engine.eval(new FileReader("./src/main/resources/templates/js/script.js"));
-		Invocable invocable = (Invocable) engine;
-				
+	private static final NashornScriptEngineFactory engineFactory = new NashornScriptEngineFactory();
+	CompiledScript compiled;
+	Compilable engine;
+	String scriptFilePath = "./src/main/resources/templates/js/script.js";
 
-		Object result = invocable.invokeFunction("fun1", "Peter Parker");
-		System.out.println(result);
-		System.out.println(result.getClass());
+	public JavaScriptProcessor() throws ScriptException, IOException {
+		engine = (Compilable) engineFactory.getScriptEngine();
+		compiled = ((Compilable) engine).compile(Files.newBufferedReader(Paths.get(scriptFilePath),StandardCharsets.UTF_8));		
+	}
+
+	public SimpleHttpResponse process(SimpleHttpRequest httpRequest)
+			throws NoSuchMethodException, ScriptException {
+		SimpleBindings global = new SimpleBindings();
+		global.put("theReq", httpRequest);
+		global.put("theResp", new SimpleHttpResponse());
 		
-		
-		HttpRequest httpRequest = new HttpRequest();
+		Object result = compiled.eval(global);
+		SimpleHttpResponse resp = (SimpleHttpResponse) result;
+		return resp;
+	}
+
+	public static void main(String[] args) throws Exception {
+
+		JavaScriptProcessor processor = new JavaScriptProcessor();
+
+		SimpleHttpRequest httpRequest = new SimpleHttpRequest();
 		httpRequest.setUri("/get/123");
-		Object result2 = invocable.invokeFunction("fun2", httpRequest, new HttpResponse());
-		HttpResponse resp = (HttpResponse) result2;
+
+		SimpleHttpResponse resp = processor.process(httpRequest);
 		System.out.println(resp.getData());
-		System.out.println(resp.getTime());
+		//System.out.println(resp.getTime());
 	}
 }

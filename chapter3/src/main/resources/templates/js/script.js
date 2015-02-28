@@ -3,12 +3,14 @@ var fun1 = function(name) {
     return "greetings from javascript";
 };
 
-var fun2 = function (req, resp) {
-    print("req: " + Object.prototype.toString.call(req));
-    resp.data = "ok";
-    resp.time = new Date().getTime();
+var router = function (req, resp) {
+    //print("req: " + Object.prototype.toString.call(req));
+    resp.data = "hello from JS Nashorn Engine";
+    //resp.time = new Date().getTime();
     return resp;
 };
+
+router(theReq, theResp)
 
 /*
 load('http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js');
