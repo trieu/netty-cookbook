@@ -1,4 +1,4 @@
-package chapter3.recipe6;
+package chapter3.recipe4;
 
 import static io.netty.handler.codec.http.HttpMethod.DELETE;
 import static io.netty.handler.codec.http.HttpMethod.GET;

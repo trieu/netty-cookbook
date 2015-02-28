@@ -1,4 +1,4 @@
-package chapter3.recipe6;
+package chapter3.recipe4;
 
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;

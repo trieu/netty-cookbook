@@ -1,4 +1,4 @@
-package chapter3.recipe9;
+package chapter3.recipe5;
 
 import io.netty.channel.ChannelInboundHandler;
 import io.netty.handler.codec.spdy.SpdyOrHttpChooser;
