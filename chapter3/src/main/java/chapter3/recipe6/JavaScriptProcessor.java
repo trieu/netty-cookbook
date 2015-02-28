@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import javax.script.Compilable;
 import javax.script.CompiledScript;
@@ -11,6 +13,8 @@ import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+
+import com.google.gson.Gson;
 
 public class JavaScriptProcessor {
 
@@ -34,11 +38,24 @@ public class JavaScriptProcessor {
 			this.uri = uri;
 		}
 
+		@Override
+		public String toString() {		
+			return new Gson().toJson(this);
+		}
 	}
 
 	public static class SimpleHttpResponse {
 		String data;
 		long time;
+		
+		public SimpleHttpResponse() {
+			// TODO Auto-generated constructor stub
+		}
+
+		public SimpleHttpResponse(String data) {
+			super();
+			this.data = data;
+		}
 
 		public String getData() {
 			return data;
@@ -54,6 +71,11 @@ public class JavaScriptProcessor {
 
 		public void setTime(long time) {
 			this.time = time;
+		}
+		
+		@Override
+		public String toString() {		
+			return new Gson().toJson(this);
 		}
 
 	}
@@ -86,8 +108,32 @@ public class JavaScriptProcessor {
 		SimpleHttpRequest httpRequest = new SimpleHttpRequest();
 		httpRequest.setUri("/get/123");
 
-		SimpleHttpResponse resp = processor.process(httpRequest);
-		System.out.println(resp.getData());
+		SimpleHttpResponse resp1 = processor.process(httpRequest);
+		System.out.println(resp1.getData());
 		//System.out.println(resp.getTime());
+		
+		UnaryOperator<SimpleHttpRequest> filterMySelf = req -> {
+			if(req.getUri().contains("admin")){
+				//no permission
+				return null;
+			}
+			return req;			
+		};				
+		Function<SimpleHttpRequest , SimpleHttpResponse> logicFunction = req -> {
+			if(req != null){
+				if(req.getUri().contains("123")){
+					return new SimpleHttpResponse("123 data");
+				}
+			}			
+			return new SimpleHttpResponse("empty data");
+		};
+		UnaryOperator<SimpleHttpResponse> formatingResult = resp -> {
+			resp.data = "(" + resp.data + ")";
+			return resp;
+		};
+		
+		System.out.println(formatingResult.apply(logicFunction.apply(filterMySelf.apply(new SimpleHttpRequest("admin/edit/123")))));
+		System.out.println(formatingResult.apply(logicFunction.apply(filterMySelf.apply(new SimpleHttpRequest("user/edit/123")))));
+		System.out.println(formatingResult.apply(logicFunction.apply(filterMySelf.apply(new SimpleHttpRequest("user/edit/456")))));
 	}
 }
