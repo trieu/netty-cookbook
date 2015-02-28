@@ -1,11 +1,22 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Getting Started: Serving Web Content</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    
+<title>Getting Started: Serving Web Content</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script
+	src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 </head>
 <body>
-    <h1 th:text="'Hello, ' + ${name} + '!'" />
+	<h1 th:text="'Hello, ' + ${name} + '!'" />
+
+	<div id="result"></div>
+	<script>
+		$(document).ready(function() {
+			var params = {data:"big data here"};
+			$.post("edit/124", params, function(data) {
+				$("#result").html(data);
+			});
+		});
+	</script>
 </body>
 </html>

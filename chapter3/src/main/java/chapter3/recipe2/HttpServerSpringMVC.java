@@ -3,12 +3,11 @@ package chapter3.recipe2;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import netty.cookbook.common.springmvc.DispatcherServletChannelInitializer;
 
-public class NettyServerSpringMVC {
+public class HttpServerSpringMVC {
 	private final int port;
 
-	public NettyServerSpringMVC(int port) {
+	public HttpServerSpringMVC(int port) {
 		this.port = port;
 	}
 
@@ -36,6 +35,6 @@ public class NettyServerSpringMVC {
 		} else {
 			port = 8080;
 		}
-		new NettyServerSpringMVC(port).run();
+		new HttpServerSpringMVC(port).run();
 	}
 }

@@ -1,4 +1,4 @@
-package netty.cookbook.common.springmvc;
+package chapter3.recipe2;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;

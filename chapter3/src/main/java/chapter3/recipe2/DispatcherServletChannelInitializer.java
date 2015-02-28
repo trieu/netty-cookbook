@@ -1,4 +1,4 @@
-package netty.cookbook.common.springmvc;
+package chapter3.recipe2;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -45,7 +45,7 @@ public class DispatcherServletChannelInitializer extends ChannelInitializer<Sock
 		//pipeline.addLast("ssl", new SslHandler(engine));
 
 		pipeline.addLast("decoder", new HttpRequestDecoder());
-		pipeline.addLast("aggregator", new HttpObjectAggregator(65536));
+		pipeline.addLast("aggregator", new HttpObjectAggregator(65536));		
 		pipeline.addLast("encoder", new HttpResponseEncoder());
 		pipeline.addLast("chunkedWriter", new ChunkedWriteHandler());
 		pipeline.addLast("handler", new ServletNettyHandler(this.dispatcherServlet));

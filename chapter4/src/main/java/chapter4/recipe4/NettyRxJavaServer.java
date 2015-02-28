@@ -1,4 +1,4 @@
-package chapter3.recipe5;
+package chapter4.recipe4;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpResponseStatus;
