@@ -9,12 +9,22 @@
 <body>
 	<h1 th:text="'Hello, ' + ${name} + '!'" />
 
-	<div id="result"></div>
+	<div id="result1"></div>
+	<div id="result2"></div>
 	<script>
 		$(document).ready(function() {
-			var params = {data:"big data here"};
-			$.post("edit/124", params, function(data) {
-				$("#result").html(data);
+
+			var params = {
+				data : "new text here",
+				id : 123
+			};
+			$.post("create", params, function(data) {
+				$("#result1").html(data);
+			});
+
+			params.data = "edited text";
+			$.post("edit", params, function(data) {
+				$("#result2").html(data);
 			});
 		});
 	</script>

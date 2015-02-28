@@ -5,9 +5,11 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 public class HttpServerSpringMVC {
-	private final int port;
+	private final String host;
+	private final int port;	
 
-	public HttpServerSpringMVC(int port) {
+	public HttpServerSpringMVC(String host,int port) {
+		this.host = host;
 		this.port = port;
 	}
 
@@ -17,10 +19,9 @@ public class HttpServerSpringMVC {
 		NioEventLoopGroup cGroup = new NioEventLoopGroup();
 		try {
 			server.group(pGroup, cGroup)
-					.channel(NioServerSocketChannel.class)
-					.localAddress(port)
+					.channel(NioServerSocketChannel.class)					
 					.childHandler(new DispatcherServletChannelInitializer(WebConfig.class));
-			server.bind().sync().channel().closeFuture().sync();
+			server.bind(host, port).sync().channel().closeFuture().sync();
 		}
 		finally {
 			cGroup.shutdownGracefully();
@@ -29,12 +30,15 @@ public class HttpServerSpringMVC {
 	}
 
 	public static void main(String[] args) throws Exception {
+		String host;
 		int port;
 		if (args.length > 0) {
-			port = Integer.parseInt(args[0]);
+			host = args[0];
+			port = Integer.parseInt(args[1]);
 		} else {
+			host = "127.0.0.1";
 			port = 8080;
 		}
-		new HttpServerSpringMVC(port).run();
+		new HttpServerSpringMVC(host, port).run();
 	}
 }

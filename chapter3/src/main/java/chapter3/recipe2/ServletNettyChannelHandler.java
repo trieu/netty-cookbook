@@ -8,18 +8,27 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.multipart.Attribute;
+import io.netty.handler.codec.http.multipart.DefaultHttpDataFactory;
+import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
+import io.netty.handler.codec.http.multipart.InterfaceHttpData;
+import io.netty.handler.codec.http.multipart.InterfaceHttpData.HttpDataType;
 import io.netty.handler.stream.ChunkedStream;
 import io.netty.util.CharsetUtil;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -35,7 +44,9 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.UriUtils;
 
-public class ServletNettyHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+
+@Sharable
+public class ServletNettyChannelHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
 	private static final String UTF_8 = "UTF-8";
 
@@ -43,18 +54,19 @@ public class ServletNettyHandler extends SimpleChannelInboundHandler<FullHttpReq
 
 	private final ServletContext servletContext;
 
-	public ServletNettyHandler(Servlet servlet) {
+	public ServletNettyChannelHandler(Servlet servlet) {
 		this.servlet = servlet;
 		this.servletContext = servlet.getServletConfig().getServletContext();
 	}
 
-	private MockHttpServletRequest createServletRequest(FullHttpRequest fullHttpReq) {
+	private MockHttpServletRequest createHttpServletRequest(FullHttpRequest fullHttpReq) {
 		UriComponents uriComponents = UriComponentsBuilder.fromUriString(fullHttpReq.getUri()).build();
 
 		MockHttpServletRequest servletRequest = new MockHttpServletRequest(this.servletContext);
 		servletRequest.setRequestURI(uriComponents.getPath());
 		servletRequest.setPathInfo(uriComponents.getPath());
 		servletRequest.setMethod(fullHttpReq.getMethod().name());
+		servletRequest.setCharacterEncoding(UTF_8);
 
 		if (uriComponents.getScheme() != null) {
 			servletRequest.setScheme(uriComponents.getScheme());
@@ -65,18 +77,38 @@ public class ServletNettyHandler extends SimpleChannelInboundHandler<FullHttpReq
 		if (uriComponents.getPort() != -1) {
 			servletRequest.setServerPort(uriComponents.getPort());
 		}
-		for (String name : fullHttpReq.headers().names()) {
-			servletRequest.addHeader(name, fullHttpReq.headers().get(name));
+		HttpHeaders headers = fullHttpReq.headers();
+		for (String name : headers.names()) {
+			servletRequest.addHeader(name, headers.get(name));
 		}
-
-		ByteBuf bbContent = fullHttpReq.content();		
-		if(bbContent.hasArray()) {			
-			servletRequest.setContent(bbContent.array());
-		} else {
-			servletRequest.setContent(bbContent.toString(Charset.forName(UTF_8)).getBytes());
-		}
+		servletRequest.setContentType(headers.get(HttpHeaders.Names.CONTENT_TYPE));
 		
-		System.out.println(uriComponents.getPath() + " \n  => " + fullHttpReq.getMethod().name()+ " " + fullHttpReq.content().toString(Charset.defaultCharset()));
+		ByteBuf bbContent = fullHttpReq.content();	
+		
+		if(bbContent.hasArray()) {				
+			servletRequest.setContent(bbContent.array());
+		} else {			
+			if(fullHttpReq.getMethod().equals(HttpMethod.POST)){
+				HttpPostRequestDecoder decoderPostData  = new HttpPostRequestDecoder(new DefaultHttpDataFactory(false), fullHttpReq);
+				String bbContentStr = bbContent.toString(Charset.forName(UTF_8));
+				servletRequest.setContent(bbContentStr.getBytes());
+				if( ! decoderPostData.isMultipart() ){
+					List<InterfaceHttpData> postDatas = decoderPostData.getBodyHttpDatas();
+					for (InterfaceHttpData postData : postDatas) {
+						if (postData.getHttpDataType() == HttpDataType.Attribute) {
+							Attribute attribute = (Attribute) postData;
+							try {											
+								servletRequest.addParameter(attribute.getName(),attribute.getValue());
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}	
+				}
+			}			
+		}	
+		
+		//System.out.println(uriComponents.getPath() + " \n  => " + fullHttpReq.getMethod().name()+ " " + fullHttpReq.content().toString(Charset.defaultCharset()));
 
 		try {
 			if (uriComponents.getQuery() != null) {
@@ -130,7 +162,7 @@ public class ServletNettyHandler extends SimpleChannelInboundHandler<FullHttpReq
 			return;
 		}
 
-		MockHttpServletRequest servletRequest = createServletRequest(fullHttpRequest);
+		MockHttpServletRequest servletRequest = createHttpServletRequest(fullHttpRequest);
 		MockHttpServletResponse servletResponse = new MockHttpServletResponse();
 
 		this.servlet.service(servletRequest, servletResponse);
@@ -146,7 +178,6 @@ public class ServletNettyHandler extends SimpleChannelInboundHandler<FullHttpReq
 
 		// Write the initial line and the header.
 		channelHandlerContext.write(response);
-
 		InputStream contentStream = new ByteArrayInputStream(servletResponse.getContentAsByteArray());
 
 		// Write the content and flush it.

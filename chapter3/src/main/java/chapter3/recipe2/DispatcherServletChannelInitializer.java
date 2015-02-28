@@ -24,6 +24,7 @@ public class DispatcherServletChannelInitializer extends ChannelInitializer<Sock
 		MockServletContext servletContext = new MockServletContext();
 		MockServletConfig servletConfig = new MockServletConfig(servletContext);
 
+		//the alternative for web.xml
 		AnnotationConfigWebApplicationContext wac = new AnnotationConfigWebApplicationContext();
 		wac.setServletContext(servletContext);
 		wac.setServletConfig(servletConfig);
@@ -39,16 +40,11 @@ public class DispatcherServletChannelInitializer extends ChannelInitializer<Sock
 		// Create a default pipeline implementation.
 		ChannelPipeline pipeline = channel.pipeline();
 
-		// Uncomment the following line if you want HTTPS
-		//SSLEngine engine = SecureChatSslContextFactory.getServerContext().createSSLEngine();
-		//engine.setUseClientMode(false);
-		//pipeline.addLast("ssl", new SslHandler(engine));
-
 		pipeline.addLast("decoder", new HttpRequestDecoder());
 		pipeline.addLast("aggregator", new HttpObjectAggregator(65536));		
 		pipeline.addLast("encoder", new HttpResponseEncoder());
 		pipeline.addLast("chunkedWriter", new ChunkedWriteHandler());
-		pipeline.addLast("handler", new ServletNettyHandler(this.dispatcherServlet));
+		pipeline.addLast("handler", new ServletNettyChannelHandler(this.dispatcherServlet));
 	}
 
 }
