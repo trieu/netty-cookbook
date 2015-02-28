@@ -82,12 +82,10 @@ public class ServletNettyChannelHandler extends SimpleChannelInboundHandler<Full
 		}
 		
 		copyHttpHeaders(fullHttpReq, servletRequest);
+		copyHttpBodyData(fullHttpReq, servletRequest);
 		
 		copyQueryParams(uriComponents, servletRequest);
-		
 		copyToServletCookie(fullHttpReq, servletRequest);
-		
-		copyHttpBodyData(fullHttpReq, servletRequest);
 		
 		return servletRequest;
 	}
@@ -133,13 +131,13 @@ public class ServletNettyChannelHandler extends SimpleChannelInboundHandler<Full
 		}
 	}
 	
-	void copyHttpHeaders(FullHttpRequest fullHttpReq, MockHttpServletRequest servletRequest){
-		HttpHeaders headers = fullHttpReq.headers();
-		for (String name : headers.names()) {
-			servletRequest.addHeader(name, headers.get(name));
-		}
-		servletRequest.setContentType(headers.get(HttpHeaders.Names.CONTENT_TYPE));
-	}
+	 void copyHttpHeaders(FullHttpRequest fullHttpReq, MockHttpServletRequest servletRequest){
+		 HttpHeaders headers = fullHttpReq.headers();
+         for (String name : headers.names()) {
+        	 servletRequest.addHeader(name, headers.get(name));
+         }
+         servletRequest.setContentType(headers.get(HttpHeaders.Names.CONTENT_TYPE));
+	 }
 	
 	void copyHttpBodyData(FullHttpRequest fullHttpReq, MockHttpServletRequest servletRequest){
 		ByteBuf bbContent = fullHttpReq.content();	
