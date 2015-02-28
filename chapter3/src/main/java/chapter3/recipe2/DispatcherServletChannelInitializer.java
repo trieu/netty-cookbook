@@ -39,7 +39,6 @@ public class DispatcherServletChannelInitializer extends ChannelInitializer<Sock
 	public void initChannel(SocketChannel channel) throws Exception {
 		// Create a default pipeline implementation.
 		ChannelPipeline pipeline = channel.pipeline();
-
 		pipeline.addLast("decoder", new HttpRequestDecoder());
 		pipeline.addLast("aggregator", new HttpObjectAggregator(65536));		
 		pipeline.addLast("encoder", new HttpResponseEncoder());

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Getting Started: Serving Web Content</title>
+<title>Hello SpringMVC with Netty</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <script
 	src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -14,16 +14,13 @@
 	<script>
 		$(document).ready(function() {
 
-			var params = {
-				data : "new text here",
-				id : 123
-			};
+			var params = { data : "new text here" , creationTime : new Date().toString() };
 			$.post("create", params, function(data) {
 				$("#result1").html(data);
 			});
 
 			params.data = "edited text";
-			$.post("edit", params, function(data) {
+			$.post("edit/123", params, function(data) {
 				$("#result2").html(data);
 			});
 		});

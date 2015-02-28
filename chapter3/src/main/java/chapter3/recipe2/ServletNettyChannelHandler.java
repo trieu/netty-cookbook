@@ -11,6 +11,8 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.Cookie;
+import io.netty.handler.codec.http.CookieDecoder;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -34,6 +36,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
@@ -77,12 +80,68 @@ public class ServletNettyChannelHandler extends SimpleChannelInboundHandler<Full
 		if (uriComponents.getPort() != -1) {
 			servletRequest.setServerPort(uriComponents.getPort());
 		}
+		
+		copyHttpHeaders(fullHttpReq, servletRequest);
+		
+		copyQueryParams(uriComponents, servletRequest);
+		
+		copyToServletCookie(fullHttpReq, servletRequest);
+		
+		copyHttpBodyData(fullHttpReq, servletRequest);
+		
+		return servletRequest;
+	}
+	
+	void copyToServletCookie(FullHttpRequest fullHttpReq, MockHttpServletRequest servletRequest){
+		String cookieString = fullHttpReq.headers().get(HttpHeaders.Names.COOKIE);
+		if (cookieString != null) {
+			Set<Cookie> cookies = CookieDecoder.decode(cookieString);
+			if (!cookies.isEmpty()) {
+		     // Reset the cookies if necessary.
+				javax.servlet.http.Cookie[] sCookies = new javax.servlet.http.Cookie[cookies.size()];
+				int i = 0;
+				for (Cookie cookie: cookies) {
+					javax.servlet.http.Cookie sCookie = new javax.servlet.http.Cookie(cookie.getName(), cookie.getValue());
+					sCookie.setPath(cookie.getPath());
+					sCookie.setMaxAge((int) cookie.getMaxAge());
+					sCookies[i++] = sCookie;
+				}				
+				servletRequest.setCookies(sCookies);
+			}
+        } else {
+        	servletRequest.setCookies( new javax.servlet.http.Cookie[0]);
+        }
+	}
+	
+	void copyQueryParams(UriComponents uriComponents, MockHttpServletRequest servletRequest){
+		try {
+			if (uriComponents.getQuery() != null) {
+				String query = UriUtils.decode(uriComponents.getQuery(), UTF_8);
+				servletRequest.setQueryString(query);
+			}
+
+			for (Entry<String, List<String>> entry : uriComponents.getQueryParams().entrySet()) {
+				for (String value : entry.getValue()) {
+					servletRequest.addParameter(
+							UriUtils.decode(entry.getKey(), UTF_8),
+							UriUtils.decode(value, UTF_8));
+				}
+			}
+		}
+		catch (UnsupportedEncodingException ex) {
+			// shouldn't happen
+		}
+	}
+	
+	void copyHttpHeaders(FullHttpRequest fullHttpReq, MockHttpServletRequest servletRequest){
 		HttpHeaders headers = fullHttpReq.headers();
 		for (String name : headers.names()) {
 			servletRequest.addHeader(name, headers.get(name));
 		}
 		servletRequest.setContentType(headers.get(HttpHeaders.Names.CONTENT_TYPE));
-		
+	}
+	
+	void copyHttpBodyData(FullHttpRequest fullHttpReq, MockHttpServletRequest servletRequest){
 		ByteBuf bbContent = fullHttpReq.content();	
 		
 		if(bbContent.hasArray()) {				
@@ -107,27 +166,6 @@ public class ServletNettyChannelHandler extends SimpleChannelInboundHandler<Full
 				}
 			}			
 		}	
-		
-		//System.out.println(uriComponents.getPath() + " \n  => " + fullHttpReq.getMethod().name()+ " " + fullHttpReq.content().toString(Charset.defaultCharset()));
-
-		try {
-			if (uriComponents.getQuery() != null) {
-				String query = UriUtils.decode(uriComponents.getQuery(), UTF_8);
-				servletRequest.setQueryString(query);
-			}
-
-			for (Entry<String, List<String>> entry : uriComponents.getQueryParams().entrySet()) {
-				for (String value : entry.getValue()) {
-					servletRequest.addParameter(
-							UriUtils.decode(entry.getKey(), UTF_8),
-							UriUtils.decode(value, UTF_8));
-				}
-			}
-		}
-		catch (UnsupportedEncodingException ex) {
-			// shouldn't happen
-		}
-		return servletRequest;
 	}
 
 	@Override
