@@ -17,10 +17,10 @@ public class LambdaHttpServer {
 	
 	public static void main(String[] args) throws Exception {
 		String ip = "127.0.0.1";
-		int port = 8080;
-		
+		int port = 8080;		
+
 		Functions functions = new Functions();
-		
+	
 		Filter filterAccessAdmin = req -> {
 			req.setNotAuthorized(req.getUri().contains("admin"));
 			return req;			
@@ -39,8 +39,9 @@ public class LambdaHttpServer {
 			resp.setData("(" + resp.getData() + ")");
 			return resp;
 		};
+
 		functions.apply(filterAccessAdmin).apply(logicFunction).apply(formatingResult);
-		
+	
 		ChannelInitializer<SocketChannel> channelInitializer = new ChannelInitializer<SocketChannel>() {			
 			@Override
 			protected void initChannel(SocketChannel ch) throws Exception {
@@ -48,7 +49,7 @@ public class LambdaHttpServer {
 				p.addLast("decoder", new HttpRequestDecoder());
 				p.addLast("aggregator", new HttpObjectAggregator(65536));		
 				p.addLast("encoder", new HttpResponseEncoder());
-				p.addLast("chunkedWriter", new ChunkedWriteHandler());		        
+				p.addLast("chunkedWriter", new ChunkedWriteHandler());	
 				p.addLast("handler", new FunctionsChannelHandler(functions));
 			}
 		};
