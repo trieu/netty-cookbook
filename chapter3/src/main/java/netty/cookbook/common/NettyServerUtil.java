@@ -19,20 +19,25 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.ClientCookieEncoder;
 import io.netty.handler.codec.http.DefaultCookie;
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
+import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpContentDecompressor;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpRequestDecoder;
+import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.handler.stream.ChunkedWriteHandler;
 
 import java.net.URI;
 
-public class BootstrapTemplate {
+public class NettyServerUtil {
 	
 	public static ChannelFuture newBootstrapUDP(EventLoopGroup loopGroup, SimpleChannelInboundHandler<DatagramPacket> handler, int port){
 		return new Bootstrap().group(loopGroup)
@@ -132,6 +137,22 @@ public class BootstrapTemplate {
 			group.shutdownGracefully();
 		}	
 	}
+	
+	public static void newHttpServerBootstrap(String ip, int port, SimpleChannelInboundHandler<? extends FullHttpRequest>  handler){	
+		ChannelInitializer<SocketChannel> channelInitializer = new ChannelInitializer<SocketChannel>() {			
+			@Override
+			protected void initChannel(SocketChannel ch) throws Exception {
+				ChannelPipeline p = ch.pipeline();
+				p.addLast("decoder", new HttpRequestDecoder());
+				p.addLast("aggregator", new HttpObjectAggregator(65536));		
+				p.addLast("encoder", new HttpResponseEncoder());
+				p.addLast("chunkedWriter", new ChunkedWriteHandler());	
+				p.addLast("handler", handler );
+			}
+		};
+		newHttpServerBootstrap(ip, port, channelInitializer);
+	}	
+	
 	
 	public static void newHttpServerBootstrap(String ip, int port, ChannelInitializer<SocketChannel>  channelInitializer){
 		// Configure the server.

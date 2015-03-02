@@ -16,7 +16,6 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.util.CharsetUtil;
@@ -25,13 +24,12 @@ import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Set;
 
-import netty.cookbook.common.http.ContentTypePool;
 import netty.cookbook.common.http.HttpEventHandler;
 
 @Sharable
 public class FunctionsChannelHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
-	final Functions eventHandler;
-	public FunctionsChannelHandler(Functions handler) {
+	final FunctionPipeline eventHandler;
+	public FunctionsChannelHandler(FunctionPipeline handler) {
 		this.eventHandler = handler;
 	}
 
@@ -71,12 +69,8 @@ public class FunctionsChannelHandler extends SimpleChannelInboundHandler<FullHtt
 		req.setHeaders(request.headers());
 		copyHttpBodyData(request, req);
 		
-		//System.out.println("path "+path);
 		SimpleHttpResponse resp =  eventHandler.apply(req);
-		String data = resp.getData();
-		HttpResponse response = HttpEventHandler.buildHttpResponse(data, 200, ContentTypePool.TEXT_UTF8);			
-		 
-		ctx.write(response);
+		ctx.write( HttpEventHandler.buildHttpResponse(resp.toString(), resp.getStatus(), resp.getContentType()) );
 		ctx.flush().close();
 		
 	}

@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import netty.cookbook.common.BootstrapTemplate;
+import netty.cookbook.common.NettyServerUtil;
 import netty.cookbook.common.http.BasicHttpResponseHandler;
 import netty.cookbook.common.http.HttpEventHandler;
 
@@ -45,6 +45,6 @@ public class HttpServerWithRouter {
 				p.addLast(routerHandler);
 			}
 		};
-		BootstrapTemplate.newHttpServerBootstrap(ip, port, channelInitializer );
+		NettyServerUtil.newHttpServerBootstrap(ip, port, channelInitializer );
 	}
 }

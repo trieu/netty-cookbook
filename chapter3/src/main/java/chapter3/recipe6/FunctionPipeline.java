@@ -2,28 +2,29 @@ package chapter3.recipe6;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import chapter3.recipe6.functions.Decorator;
 import chapter3.recipe6.functions.Filter;
 import chapter3.recipe6.functions.FinalProcessor;
 
-public class Functions {
+public class FunctionPipeline {
 	
 	
 	List<Filter> filterFunctions = new ArrayList<>();
-	public Functions apply(Filter f){
+	public FunctionPipeline apply(Filter f){
 		filterFunctions.add(f);
 		return this;
 	}
 	
-	List<FinalProcessor> processorFunctions = new ArrayList<>();
-	public Functions apply(FinalProcessor f){
+	List<Function<SimpleHttpRequest , SimpleHttpResponse>> processorFunctions = new ArrayList<>();
+	public FunctionPipeline apply(Function<SimpleHttpRequest , SimpleHttpResponse> f){
 		processorFunctions.add(f);
 		return this;
 	}
 	
 	List<Decorator> decoratorFunctions = new ArrayList<>();
-	public Functions apply(Decorator f){
+	public FunctionPipeline apply(Decorator f){
 		decoratorFunctions.add(f);
 		return this;
 	}
@@ -80,7 +81,7 @@ public class Functions {
 
 	public static void main(String[] args) throws Exception {
 
-		Functions processor = new Functions();
+		FunctionPipeline processor = new FunctionPipeline();
 
 //		SimpleHttpRequest httpRequest = new SimpleHttpRequest();
 //		httpRequest.setUri("/get/123");
@@ -100,7 +101,7 @@ public class Functions {
 			return new SimpleHttpResponse();
 		};
 		Decorator formatingResult = resp -> {
-			resp.setData("(" + resp.getData() + ")");
+			resp.setBody("(" + resp.getBody() + ")");
 			return resp;
 		};
 				

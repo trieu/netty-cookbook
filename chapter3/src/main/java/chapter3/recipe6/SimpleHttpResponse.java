@@ -1,9 +1,14 @@
 package chapter3.recipe6;
 
+import netty.cookbook.common.http.ContentTypePool;
+
 import com.google.gson.Gson;
 
 public class SimpleHttpResponse {
-	protected String data;
+	protected int status = 200;
+	protected String contentType = ContentTypePool.TEXT_UTF8;
+	protected String head;
+	protected String body;
 	protected long time;
 	
 	public SimpleHttpResponse() {
@@ -12,15 +17,39 @@ public class SimpleHttpResponse {
 
 	public SimpleHttpResponse(String data) {
 		super();
-		this.data = data;
+		this.body = data;
+	}
+	
+	public int getStatus() {
+		return status;
 	}
 
-	public String getData() {
-		return data;
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
-	public void setData(String data) {
-		this.data = data;
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public String getHead() {
+		return head;
+	}
+
+	public void setHead(String head) {
+		this.head = head;
+	}
+
+	public String getBody() {
+		return body;
+	}
+
+	public void setBody(String data) {
+		this.body = data;
 	}
 
 	public long getTime() {

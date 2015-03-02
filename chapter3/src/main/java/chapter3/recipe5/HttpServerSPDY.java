@@ -11,7 +11,7 @@ import io.netty.handler.ssl.ApplicationProtocolConfig.SelectorFailureBehavior;
 import io.netty.handler.ssl.IdentityCipherSuiteFilter;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
-import netty.cookbook.common.BootstrapTemplate;
+import netty.cookbook.common.NettyServerUtil;
 
 public class HttpServerSPDY {
 	
@@ -40,7 +40,7 @@ public class HttpServerSPDY {
 				p.addLast(new SpdyOrHttpHandler());
 			}
 		};
-		BootstrapTemplate.newHttpServerBootstrap(ip, port, channelInit);
+		NettyServerUtil.newHttpServerBootstrap(ip, port, channelInit);
 	}
 
 }

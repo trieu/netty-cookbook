@@ -13,7 +13,7 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.cors.CorsConfig;
 import io.netty.handler.codec.http.cors.CorsHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
-import netty.cookbook.common.BootstrapTemplate;
+import netty.cookbook.common.NettyServerUtil;
 
 public class NettyHttpServerWithCORS {
 
@@ -38,6 +38,6 @@ public class NettyHttpServerWithCORS {
 				p.addLast(new SimpleCORSHandler());
 			}
 		};
-		BootstrapTemplate.newHttpServerBootstrap(ip, port, channelInit);
+		NettyServerUtil.newHttpServerBootstrap(ip, port, channelInit);
 	}
 }
