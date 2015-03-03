@@ -35,8 +35,7 @@ public class HttpServerSPDY {
 			@Override
 			protected void initChannel(SocketChannel ch) throws Exception {
 				ChannelPipeline p = ch.pipeline();
-				p.addLast(sslCtx.newHandler(ch.alloc()));
-				// Negotiates with the browser if SPDY is going to be used
+				p.addLast(sslCtx.newHandler(ch.alloc()));				
 				p.addLast(new SpdyOrHttpHandler());
 			}
 		};
