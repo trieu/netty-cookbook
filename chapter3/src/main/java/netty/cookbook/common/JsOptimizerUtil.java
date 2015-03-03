@@ -1,4 +1,4 @@
-package chapter3.recipe3;
+package netty.cookbook.common;
 
 import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.Compiler;

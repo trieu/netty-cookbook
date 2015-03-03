@@ -19,8 +19,7 @@ import netty.cookbook.common.http.HttpEventHandler;
 import com.google.gson.Gson;
 
 public class SimpleCORSHandler  extends SimpleChannelInboundHandler<FullHttpRequest> {
-	
-	
+		
     @Override
     public void channelRead0(ChannelHandlerContext ctx, FullHttpRequest req) {
         
