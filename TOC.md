@@ -1,5 +1,5 @@
-#Netty Cookbook- 
-* Recipes for building asynchronous event-driven network application  * 
+#Netty Cookbook
+*Recipes for building asynchronous event-driven network application* 
 
 *Table of Contents*
 
